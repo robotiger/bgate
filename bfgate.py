@@ -9,6 +9,8 @@ import queue
 import datetime
 import logging
 import uuid
+import msgpack
+import paho.mqtt.client as mqtt 
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -19,12 +21,20 @@ import uuid
 
 
 """
+   00 03 9c 97 89 7e 7c a8 01 ff 7f a9 25 02 01 1a 1b ff 8f 03 16 01 01 00 48 00 e4 3c 74 20 55 97 9c 89 a8 7c 7e 36 97 9c 89 a8 7c 7e   
+
 HIBEACON ble4
    00 03 62 66 dc c1 de fb 01 ff 7f bc 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 7f 48 92 db f5 8c 11 9d c0 98 49 b7 01 64 b2 8a f8
    00 03 62 66 dc c1 de fb 01 ff 7f d7 26 02 01 06 1a ff 4c 00 02 15 00 00 00 01 7f 48 92 db f5 8c 11 9d c0 98 49 b7 05 02 2a c7 f8  
-HB ble5   
+   00 03 11 e7 bb 3e 29 7b 01 ff 7f be 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 76 7d 25 88 86 36 5b b1 fa 2f 31 41 04 07 00 2b f8
+-1 0  1  2  3   4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 
+   type | mac             |bits |tx|rs|pr|flags   |le|us|idmfg|id?  |     UUID                                      |major|minor|tx
+   const| id              |const   |var  |const   | const           |       id                                      |var                
+                                                               cccccccccccccccccrrrrrrrrrrrrccccccccccccccccccccc    
+
+HB ble5 
    00 03 95 39 6e 74 da 05 01 ff 7f c0 27 02 01 06 16 ff b1 bf 00 1c 5f 01 00 95 39 6e 74 da 05 00 00 00 00 00 f8 72 d3 03 08 48 42 
-43 00 03 af bf cf df ef ff 01 ff 7f f2 26 02 01 06 17 ff bf b1 00 00 7d 01 00 ff ff ff ff ff ff 00 00 00 00 00 f8 42 c4 03 08 48 42
+43 00 03 af bf cf df ef ff 01 ff 7f f2 26 02 01 06 16 ff bf b1 00 00 7d 01 00 ff ff ff ff ff ff 00 00 00 00 00 f8 42 c4 03 08 48 42
    00 03 41 92 11 c2 a3 4c 01 ff 7f c1 26 02 01 06 16 ff b1 bf 00 00 0b 01 00 41 92 11 c2 a3 4c 00 00 00 00 00 f8 41 ab 03 08 48 42 
    00 03 a4 59 b0 20 45 81 01 ff 7f ca 26 02 01 06 16 ff b1 bf 00 00 0d 01 00 a4 59 b0 20 45 81 00 00 00 00 00 f8 4d b4 03 08 48 42   
 -1 0  1  2  3   4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 
@@ -63,26 +73,6 @@ len 44  change to 43
 
 
 
-filtermac=[
-#[0x62,0x66,0xdc,0xc1,0xde,0xfb],
-#[0xa5,0x75,0xcf,0x0c,0x91,0x97],
-#[0xe1,0x8d,0x8d,0x38,0xc4,0x24],
-#[0xee,0xd5,0x99,0x05,0xae,0xd3],
-#[0xef,0x11,0x48,0x83,0x11,0x5b],
-#[0xf4,0xb8,0x5e,0xde,0xb2,0x08],
-#[0xfd,0x03,0x97,0x13,0xda,0x76]
-]
-
-bfiltermac=[
-b'\xaf\xbf\xcf\xdf\xef\xff',
-#b'\x62\x66\xdc\xc1\xde\xfb',
-#b'\xa5\x75\xcf\x0c\x91\x97',
-#b'\xe1\x8d\x8d\x38\xc4\x24',
-#b'\xee\xd5\x99\x05\xae\xd3',
-#b'\xef\x11\x48\x83\x11\x5b',
-#b'\xf4\xb8\x5e\xde\xb2\x08',
-#b'\xfd\x03\x97\x13\xda\x76'
-]
 
 
 def logi(s):
@@ -103,6 +93,9 @@ class SerialBgate(threading.Thread):
 
         self.queue = queue.Queue() 
         self.cnt = 0
+        self.mqttclient=mqtt.Client("bfg")
+        self.mqttclient.connect("192.168.31.204")
+        self.mqttclient.subscribe("
 
     def run(self): 
         print("run")
@@ -117,6 +110,27 @@ class SerialBgate(threading.Thread):
     def Print(self,txt):
         if(not self.queue.empty()):
             print(txt,self.queue.get())
+            
+    def DecodeB(self,dpin):
+        dpo={}
+        if len(dpin)>=43: #наши пакеты 43
+            dpo["mac"]=dpin[2:8]
+            dpo["raw"]=dpin
+            if dpin[16:19]==b'\x1a\xffL\x00': #apple beacon ble4
+                dpo["type"]=1
+                dpo["uuid"]=dpin[22:38]
+                dpo["cnt"]=dpin[38]*256+dpin[39]
+                dpo["ext"]=dpin[40]
+                dpo["exd"]=dpin[41]
+                dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
+            if dpin[16:19]==b'\x16\xff\xb1\xbf': #andrew beacon ble5
+                dpo["type"]=2
+                dpo["uuid"]=dpin[23:31]
+                dpo["cnt"]=dpin[21]*256+dpin[22]
+                dpo["ext"]=dpin[31]
+                dpo["exd"]=dpin[32:36]                
+                dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
+        return dpo
 
     def SerialDaemon(self):
        
@@ -159,7 +173,7 @@ class SerialBgate(threading.Thread):
                         self.cnt=0
 
 
-#                        print(self.port,end=': ')
+                        print(self.port,end=': ')
 #                        print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
 #                        for d in self.datapack:
 #                            print("%02x "%d,end='')
@@ -167,9 +181,11 @@ class SerialBgate(threading.Thread):
 
 
 
-                        if len(self.datapack)==43:
+#                        if len(self.datapack)==43:
+                        if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
-
+                            dp=DecodeB(self.datapack)
+                            print(dp)
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
 #                            for d in self.datapack:
