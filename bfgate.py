@@ -190,7 +190,7 @@ class SerialBgate(threading.Thread):
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=self.DecodeB(self.datapack)
-                            #print(dp)
+                            print(dp)
 
                             if "mfg" in dp:
                                 print(dp["mfg"],dp["mac"].hex(),dp["uuid"],dp["rssi"],dp["txpower"],dp["cnt"])
@@ -203,7 +203,7 @@ class SerialBgate(threading.Thread):
 #                            print(' ')
 
 #                            if self.datapack[0:6] in bfiltermac :
-                            print(dp["mac"].hex(),dp["rssi"])
+                            #print(dp["mac"].hex(),dp["rssi"])
                             #logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
                             #self.port,
                             #int(self.datapack[2]),
