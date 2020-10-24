@@ -81,6 +81,29 @@ def logi(s):
     logging.info(s)
     print(s)
 
+def DecodeB(self,dpin):
+    dpo={}
+    if len(dpin)>=43: #наши пакеты 43
+        dpo["mac"]=dpin[2:8]
+        dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
+        dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
+        dpo["raw"]=dpin
+        if dpin[16:19]==b'\x1a\xffL\x00': #apple beacon ble4
+            dpo["mfg"]=1
+            dpo["uuid"]=dpin[22:38]
+            dpo["cnt"]=dpin[38]*256+dpin[39]
+            dpo["ext"]=dpin[40]
+            dpo["exd"]=dpin[41]
+            dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
+        if dpin[16:19]==b'\x16\xff\xb1\xbf': #andrew beacon ble5
+            dpo["mfg"]=2
+            dpo["uuid"]=dpin[23:31]
+            dpo["cnt"]=dpin[21]*256+dpin[22]
+            dpo["ext"]=dpin[31]
+            dpo["exd"]=dpin[32:36]                
+            dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
+    return dpo
+
 
 
 class SerialBgate(threading.Thread):
@@ -111,28 +134,7 @@ class SerialBgate(threading.Thread):
         if(not self.queue.empty()):
             print(txt,self.queue.get())
             
-    def DecodeB(self,dpin):
-        dpo={}
-        if len(dpin)>=43: #наши пакеты 43
-            dpo["mac"]=dpin[2:8]
-            dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
-            dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
-            dpo["raw"]=dpin
-            if dpin[16:19]==b'\x1a\xffL\x00': #apple beacon ble4
-                dpo["mfg"]=1
-                dpo["uuid"]=dpin[22:38]
-                dpo["cnt"]=dpin[38]*256+dpin[39]
-                dpo["ext"]=dpin[40]
-                dpo["exd"]=dpin[41]
-                dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
-            if dpin[16:19]==b'\x16\xff\xb1\xbf': #andrew beacon ble5
-                dpo["mfg"]=2
-                dpo["uuid"]=dpin[23:31]
-                dpo["cnt"]=dpin[21]*256+dpin[22]
-                dpo["ext"]=dpin[31]
-                dpo["exd"]=dpin[32:36]                
-                dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
-        return dpo
+
 
     def SerialDaemon(self):
        
@@ -186,7 +188,7 @@ class SerialBgate(threading.Thread):
 #                        if len(self.datapack)==43:
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
-                            dp=self.DecodeB(self.datapack)
+                            dp=DecodeB(self.datapack)
                             #print(dp)
                             #self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
                                                     
