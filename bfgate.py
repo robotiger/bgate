@@ -186,7 +186,7 @@ class SerialBgate(threading.Thread):
 #                        if len(self.datapack)==43:
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
-                            dp=DecodeB(self.datapack)
+                            dp=self.DecodeB(self.datapack)
                             #print(dp)
                             #self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
                                                     
