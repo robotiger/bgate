@@ -135,7 +135,7 @@ class SerialBgate(threading.Thread):
                 dpo["cnt"]=dpin[21]*256+dpin[22]
                 dpo["ext"]=dpin[31]
                 dpo["exd"]=dpin[32:36]                
-                dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
+                dpo["txpower"]=dpin[36] if dpin[36] < 127 else dpin[36]-256
         return dpo            
 
 
