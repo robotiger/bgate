@@ -12,7 +12,7 @@ pip3 install wheel gunicorn flask #проверить порядок устан�
 pip3 install requests
 pip3 install pyserial
 pip3 install paho-mqtt
-
+pip3 install msgpack
 
 #sudo cp barry.conf /etc/nginx/sites-available
 #sudo ln -s /etc/nginx/sites-available/barry.conf /etc/nginx/sites-enabled/

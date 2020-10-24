@@ -95,7 +95,7 @@ class SerialBgate(threading.Thread):
         self.cnt = 0
         self.mqttclient=mqtt.Client("bfg")
         self.mqttclient.connect("192.168.31.204")
-        self.mqttclient.subscribe("
+        #self.mqttclient.subscribe("
 
     def run(self): 
         print("run")
@@ -186,6 +186,8 @@ class SerialBgate(threading.Thread):
 
                             dp=DecodeB(self.datapack)
                             print(dp)
+                            self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
+                                                    
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
 #                            for d in self.datapack:
