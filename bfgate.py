@@ -113,7 +113,7 @@ class SerialBgate(threading.Thread):
         if(not self.queue.empty()):
             print(txt,self.queue.get())
 
-    def DecodeB(dpin):
+    def DecodeB(self,dpin):
         dpo={}
         if len(dpin)>=43: #наши пакеты 43
             dpo["mac"]=dpin[2:8]
