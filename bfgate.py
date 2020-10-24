@@ -196,7 +196,7 @@ class SerialBgate(threading.Thread):
 
                             if "mfg" in dp:
                                 print(dp["mfg"],dp["mac"].hex(),dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"].hex())
-                            #self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
+                            self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
