@@ -81,7 +81,7 @@ def logi(s):
     logging.info(s)
     print(s)
 
-def DecodeB(self,dpin):
+def DecodeB(dpin):
     dpo={}
     if len(dpin)>=43: #наши пакеты 43
         dpo["mac"]=dpin[2:8]
