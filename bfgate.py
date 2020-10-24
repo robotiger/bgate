@@ -115,16 +115,18 @@ class SerialBgate(threading.Thread):
         dpo={}
         if len(dpin)>=43: #наши пакеты 43
             dpo["mac"]=dpin[2:8]
+            dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
+            dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
             dpo["raw"]=dpin
             if dpin[16:19]==b'\x1a\xffL\x00': #apple beacon ble4
-                dpo["type"]=1
+                dpo["mfg"]=1
                 dpo["uuid"]=dpin[22:38]
                 dpo["cnt"]=dpin[38]*256+dpin[39]
                 dpo["ext"]=dpin[40]
                 dpo["exd"]=dpin[41]
                 dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
             if dpin[16:19]==b'\x16\xff\xb1\xbf': #andrew beacon ble5
-                dpo["type"]=2
+                dpo["mfg"]=2
                 dpo["uuid"]=dpin[23:31]
                 dpo["cnt"]=dpin[21]*256+dpin[22]
                 dpo["ext"]=dpin[31]
@@ -185,8 +187,8 @@ class SerialBgate(threading.Thread):
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=DecodeB(self.datapack)
-                            print(dp)
-                            self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
+                            #print(dp)
+                            #self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
@@ -195,43 +197,44 @@ class SerialBgate(threading.Thread):
 #                            print(' ')
 
 #                            if self.datapack[0:6] in bfiltermac :
-                            logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
-                            self.port,
-                            int(self.datapack[2]),
-                            int(self.datapack[3]),
-                            int(self.datapack[4]),
-                            int(self.datapack[5]),
-                            int(self.datapack[6]),
-                            int(self.datapack[7]), #mac
+                            print(dp["mac"].hex(),dp["rssi"])
+                            #logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
+                            #self.port,
+                            #int(self.datapack[2]),
+                            #int(self.datapack[3]),
+                            #int(self.datapack[4]),
+                            #int(self.datapack[5]),
+                            #int(self.datapack[6]),
+                            #int(self.datapack[7]), #mac
 
-                            int(self.datapack[19]), #manid
-                            int(self.datapack[18]), #manid2
+                            #int(self.datapack[19]), #manid
+                            #int(self.datapack[18]), #manid2
 
-                            int(self.datapack[23]), #dev type
-                            int(self.datapack[24]), #dev subtype
-                            int(self.datapack[25]), #id
-                            int(self.datapack[26]), #id
-                            int(self.datapack[27]), #id
-                            int(self.datapack[28]), #id
-                            int(self.datapack[29]), #id
-                            int(self.datapack[30]), #id
+                            #int(self.datapack[23]), #dev type
+                            #int(self.datapack[24]), #dev subtype
+                            #int(self.datapack[25]), #id
+                            #int(self.datapack[26]), #id
+                            #int(self.datapack[27]), #id
+                            #int(self.datapack[28]), #id
+                            #int(self.datapack[29]), #id
+                            #int(self.datapack[30]), #id
 
-                            int(self.datapack[21])*256+int(self.datapack[22]),
+                            #int(self.datapack[21])*256+int(self.datapack[22]),
 
-                            int(self.datapack[36]), #txpower
-                            int(self.datapack[11])-256, #rssi
-                            int(self.datapack[12]), #channel
+                            #int(self.datapack[36]), #txpower
+                            #int(self.datapack[11])-256, #rssi
+                            #int(self.datapack[12]), #channel
 
 
                                                     
-#                            int(self.datapack[6])*256+int(self.datapack[7]),
-#                            int(self.datapack[8]),
-#                            int(self.datapack[9]),
-#                            int(self.datapack[10]),# if int(self.datapack[10]>127,
-#                            int(self.datapack[11])-256,
-#                            int(self.datapack[12]),
+##                            int(self.datapack[6])*256+int(self.datapack[7]),
+##                            int(self.datapack[8]),
+##                            int(self.datapack[9]),
+##                            int(self.datapack[10]),# if int(self.datapack[10]>127,
+##                            int(self.datapack[11])-256,
+##                            int(self.datapack[12]),
 
-                            ))
+                            #))
 #                                self.queue.put("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
                         
 #                        print("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
