@@ -178,7 +178,7 @@ class SerialBgate(threading.Thread):
                         self.cnt=0
 
 
-                        print(self.port,end=': ')
+                        #print(self.port,end=': ')
 #                        print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
 #                        for d in self.datapack:
 #                            print("%02x "%d,end='')
