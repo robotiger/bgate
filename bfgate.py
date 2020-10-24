@@ -120,14 +120,16 @@ class SerialBgate(threading.Thread):
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
             dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
             dpo["raw"]=dpin
-            if dpin[16:19]==b'\x1a\xffL\x00': #apple beacon ble4
+            mfg=dpin[16:20].hex()
+            #print(mfg)
+            if mfg=='1aff4c00': #apple beacon ble4
                 dpo["mfg"]=1
                 dpo["uuid"]=dpin[22:38]
                 dpo["cnt"]=dpin[38]*256+dpin[39]
                 dpo["ext"]=dpin[40]
                 dpo["exd"]=dpin[41]
                 dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
-            if dpin[16:19]==b'\x16\xff\xb1\xbf': #andrew beacon ble5
+            if mfg=='16ffb1bf': #andrew beacon ble5
                 dpo["mfg"]=2
                 dpo["uuid"]=dpin[23:31]
                 dpo["cnt"]=dpin[21]*256+dpin[22]
@@ -190,10 +192,10 @@ class SerialBgate(threading.Thread):
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=self.DecodeB(self.datapack)
-                            print(dp)
+#                            print(dp)
 
                             if "mfg" in dp:
-                                print(dp["mfg"],dp["mac"].hex(),dp["uuid"],dp["rssi"],dp["txpower"],dp["cnt"])
+                                print(dp["mfg"],dp["mac"].hex(),dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"].hex())
                             #self.mqttclient.publish("BFG5",msgpack.backb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
