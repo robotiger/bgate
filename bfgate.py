@@ -190,7 +190,7 @@ class SerialBgate(threading.Thread):
                         if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=self.DecodeB(self.datapack)
-                            print(dp)
+                            #print(dp)
 
                             if "mfg" in dp:
                                 print(dp["mfg"],dp["mac"].hex(),dp["uuid"],dp["rssi"],dp["txpower"],dp["cnt"])
