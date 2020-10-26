@@ -196,7 +196,7 @@ class SerialBgate(threading.Thread):
 
                             if "mfg" in dp:
                                 print(dp["mfg"],dp["mac"].hex(),dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"].hex())
-                            self.mqttclient.publish("BFG5",msgpack.packb(dp,use_bin_type=True))
+                            self.mqttclient.publish("BF5",msgpack.packb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
@@ -271,6 +271,9 @@ for  arg in range(1,len(sys.argv)):
     print("<",arg,">")
     ls[arg]=SerialBgate(sys.argv[arg])
     ls[arg].start()
+print(uuid.getnode())
+      
+
 
 t=input("Enter to exit")
 
