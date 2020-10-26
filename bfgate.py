@@ -11,6 +11,18 @@ import logging
 import uuid
 import msgpack
 import paho.mqtt.client as mqtt 
+from flask import Flask, jsonify
+from flask import request
+from flask import send_from_directory, send_file, safe_join
+from flask import flash, redirect, url_for
+from werkzeug.utils import secure_filename
+from werkzeug.contrib.fixers import ProxyFix
+import json
+import requests
+import threading
+import shelve
+import hashlib
+
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -96,7 +108,7 @@ class SerialBgate(threading.Thread):
         self.queue = queue.Queue() 
         self.cnt = 0
         self.mqttclient=mqtt.Client("bfg")
-        self.mqttclient.connect("192.168.31.204")
+        self.mqttclient.connect(config["broker"],port=config["brokerport"])
         #self.mqttclient.subscribe("
 
     def run(self): 
@@ -116,7 +128,8 @@ class SerialBgate(threading.Thread):
     def DecodeB(self,dpin):
         dpo={}
         if len(dpin)>=43: #наши пакеты 43
-            dpo["mac"]=dpin[2:8]
+            dpo["macgate"]=config["macgate"]
+            dpo["macbeacon"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
             dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
             dpo["raw"]=dpin
@@ -124,14 +137,14 @@ class SerialBgate(threading.Thread):
             #print(mfg)
             if mfg=='1aff4c00': #apple beacon ble4
                 dpo["mfg"]=1
-                dpo["uuid"]=dpin[22:38]
+                dpo["uuid"]=dpin[22:38].hex()
                 dpo["cnt"]=dpin[38]*256+dpin[39]
                 dpo["ext"]=dpin[40]
                 dpo["exd"]=dpin[41]
                 dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
             if mfg=='16ffb1bf': #andrew beacon ble5
                 dpo["mfg"]=2
-                dpo["uuid"]=dpin[23:31]
+                dpo["uuid"]=dpin[23:31].hex()
                 dpo["cnt"]=dpin[21]*256+dpin[22]
                 dpo["ext"]=dpin[31]
                 dpo["exd"]=dpin[32:36]                
@@ -196,7 +209,7 @@ class SerialBgate(threading.Thread):
 
                             if "mfg" in dp:
                                 print(dp["mfg"],dp["mac"].hex(),dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"].hex())
-                            self.mqttclient.publish("BF5",msgpack.packb(dp,use_bin_type=True))
+                            self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
 #                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
@@ -243,13 +256,6 @@ class SerialBgate(threading.Thread):
 ##                            int(self.datapack[12]),
 
                             #))
-#                                self.queue.put("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
-                        
-#                        print("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
-                                
-#                        for oneb in self.datapack:
-#                            print('%x'%(oneb,),end=' ')
-#                        print('')
             
 
 
@@ -267,12 +273,18 @@ class SerialBgate(threading.Thread):
 
 
 ls={}
+config=shelve.open("/home/bfg/bgate/config")
+if not "macgate" in config:
+    config["macgate"]="%012X"%uuid.getnode()
+    config["uuid"]=uuid.uuid1()
+    config["broker"]="192.168.31.204"
+    config["brokerport"]=1883
+    config["topic"]="BFG5"
+
 for  arg in range(1,len(sys.argv)):
     print("<",arg,">")
     ls[arg]=SerialBgate(sys.argv[arg])
     ls[arg].start()
-print(uuid.getnode())
-      
 
 
 t=input("Enter to exit")
