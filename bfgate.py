@@ -128,8 +128,8 @@ class SerialBgate(threading.Thread):
     def DecodeB(self,dpin):
         dpo={}
         if len(dpin)>=43: #наши пакеты 43
-            dpo["macgate"]=config["macgate"]
-            dpo["macbeacon"]=dpin[2:8].hex()
+            dpo["gate"]=config["macgate"]
+            dpo["mac"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
             dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
             dpo["raw"]=dpin
@@ -208,7 +208,7 @@ class SerialBgate(threading.Thread):
 #                            print(dp)
 
                             if "mfg" in dp:
-                                print(dp["macgate"],dp["mfg"],dp["macbeacon"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"])
+                                print(config["topic"],dp["macgate"],dp["mfg"],dp["macbeacon"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"])
                             self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
                                                     
 #                            print(self.port,end=': ')
