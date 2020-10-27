@@ -147,7 +147,7 @@ class SerialBgate(threading.Thread):
                 dpo["uuid"]='00000000'+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
                 dpo["cnt"]=dpin[21]*256+dpin[22]
                 dpo["ext"]=dpin[31]
-                dpo["exd"]=dpin[32:36]                
+                dpo["exd"]=int(dpin[32:36].hex(),16)
                 dpo["txpower"]=dpin[36] if dpin[36] < 127 else dpin[36]-256
         return dpo            
 
@@ -275,7 +275,7 @@ class SerialBgate(threading.Thread):
 ls={}
 config=shelve.open("/home/bfg/bgate/config")
 if not "macgate" in config:
-    config["macgate"]="%012X"%uuid.getnode()
+    config["macgate"]="%012x"%uuid.getnode()
     config["uuid"]=uuid.uuid1()
     config["broker"]="192.168.31.204"
     config["brokerport"]=1883
