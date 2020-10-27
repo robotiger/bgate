@@ -131,7 +131,7 @@ class SerialBgate(threading.Thread):
             dpo["gate"]=config["macgate"]
             dpo["mac"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
-            dpo["port"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
+            dpo["band"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
             dpo["raw"]=dpin
             mfg=dpin[16:20].hex()
             #print(mfg)
