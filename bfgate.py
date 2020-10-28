@@ -217,7 +217,7 @@ class SerialBgate(threading.Thread):
 
 
 #                        if len(self.datapack)==43:
-                        if len(self.datapack)>=43: # and self.datapack[39:]==b"\x03\x08HB":
+                        if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=self.DecodeB(self.datapack)
 #                            print(dp)
