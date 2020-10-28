@@ -136,7 +136,7 @@ class SerialBgate(threading.Thread):
             mfg=dpin[16:20].hex()
             #print(mfg)
             if mfg=='1aff4c00': #apple beacon ble4
-                if m[15:17].hex()=='0215': #                
+                if dpo[15:17].hex()=='0215': #                
                     dpo["mfg"]=1
                     dpo["uuid"]=dpin[22:38].hex()
                     dpo["cnt"]=dpin[38]*256+dpin[39]
