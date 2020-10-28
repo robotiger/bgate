@@ -107,7 +107,7 @@ class SerialBgate(threading.Thread):
 
         self.queue = queue.Queue() 
         self.cnt = 0
-        self.mqttclient=mqtt.Client("bfg")
+        self.mqttclient=mqtt.Client(config["macgate"])
         self.mqttclient.connect(config["broker"],port=config["brokerport"])
         #self.mqttclient.subscribe("
 
