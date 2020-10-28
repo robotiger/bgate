@@ -132,7 +132,7 @@ class SerialBgate(threading.Thread):
             dpo["mac"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
             dpo["band"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
-            dpo["raw"]=dpin
+            dpo["raw"]=dpin.hex()
             mfg=dpin[16:20].hex()
             #print(mfg)
             if mfg=='1aff4c00': #apple beacon ble4
