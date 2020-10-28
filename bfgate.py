@@ -127,11 +127,11 @@ class SerialBgate(threading.Thread):
 
     def DecodeB(self,dpin):
         dpo={}
-        if len(dpin)==13:
+        if dpin[2]==0x12:
             dpo["gate"]=config["macgate"]
             dpo["mac"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
-            dpo["band"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
+            dpo["band"]=dpin[12] 
             dpo["raw"]=dpin.hex()
             dpo["mfg"]=5
             dpo["uuid"]='00000000'+dpin[3:5].hex() +'40008000'+ dpin[5:11].hex()
