@@ -13,6 +13,8 @@ pip3 install requests
 pip3 install pyserial
 pip3 install paho-mqtt
 pip3 install msgpack
+pip3 uninstall werkzeug
+pip3 install werkzeug==0.16.0
 
 #sudo cp barry.conf /etc/nginx/sites-available
 #sudo ln -s /etc/nginx/sites-available/barry.conf /etc/nginx/sites-enabled/

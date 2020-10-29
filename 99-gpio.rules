@@ -1,0 +1,6 @@
+
+#    SUBSYSTEM==â"gpioâ", KERNEL==â"gpiochip*â", ACTION==â"addâ", PROGRAM=â"/bin/sh -c â'chown root:gpio /sys/class/gpio/export /sys/class/gpio/unexport ; chmod 220 /sys/class/gpio/export /sys/class/gpio/unexport'" 
+#    SUBSYSTEM==â"gpioâ", KERNEL==â"gpio*â", ACTION==â"addâ", PROGRAM=â"/bin/sh -c â'chown root:gpio /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value ; chmod 660 /sys%p/active_low /sys%p/direction /sys%p/edge /sys%p/value'"
+KERNEL=="gpio*", GROUP="gpio", MODE="0660"
+SUBSYSTEM=="gpio*", PROGRAM="/bin/sh -c 'chown -R root:gpio /sys/class/gpio && chown -R root:gpio /sys/devices/platform/soc/1c20800.pinctrl && chown -R root:gpio /sys/devices/platform/soc/1f02c00.pinctrl && chmod -R ug+rw /sys/class/gpio && chmod -R ug+rw /sys/devices/platform/soc/1c20800.pinctrl && chmod -R ug+rw /sys/devices/platform/soc/1f02c00.pinctrl'"
+
