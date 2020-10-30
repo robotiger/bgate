@@ -296,9 +296,9 @@ if __name__ == '__main__':
     
     
     #app.run(debug=True)
-    while True:
-        time.sleep(1)
-    #t=input("Enter to exit")
+    #while True:
+    #    time.sleep(1)
+    t=input("Enter to exit")
     
     for  b in ls:
         ls[b].stop()
