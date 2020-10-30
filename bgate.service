@@ -6,8 +6,8 @@ After=network.target
 User=bfg
 Group=bfg
 PIDFile=/var/tmp/bgate.pid
-WorkingDirectory=/home/bar/bgate
-ExecStart=/bin/bash /home/bar/bgate/bgate.sh
+WorkingDirectory=/home/bfg/bgate
+ExecStart=/bin/bash /home/bfg/bgate/bgate.sh
 
 Restart=on-failure
 RestartSec=15s
