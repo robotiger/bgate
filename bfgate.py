@@ -23,6 +23,8 @@ import threading
 import shelve
 import hashlib
 
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -285,8 +287,31 @@ class SerialBgate(threading.Thread):
             return None
 
 
+@app.route('/', methods=['GET','PUT','POST'])
+def get_tasks():
+
+    return """
+    <html>
+    <head>
+    <title> my shlagbaum </title>
+    <meta charset="UTF-8">
+    </head>
+    <body>
+    <p>
+    API present  <br><br>
+    </p>
+    <p>
+    </p>
+    </body>
+    </html>
+    """
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+UPLOAD_FOLDER = '/var/www/upload'
 
 ls={}
 config=shelve.open("/home/bfg/bgate/config")
@@ -297,18 +322,25 @@ if not "macgate" in config:
     config["brokerport"]=1883
     config["topic"]="BFG5"
 
-for  arg in range(1,len(sys.argv)):
+#argv=sys.argv
+argv=["i","/dev/ttyS1"]
+for  arg in range(1,len(argv)):
     print("<",arg,">")
-    ls[arg]=SerialBgate(sys.argv[arg])
+    ls[arg]=SerialBgate(argv[arg])
     ls[arg].start()
 
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "my super secret key"
+
+app.wsgi_app = ProxyFix(app.wsgi_app)
+app.run(debug=True)
 
 t=input("Enter to exit")
 
 for  b in ls:
     ls[b].stop()
     ls[b].join()
-
 
 
 
