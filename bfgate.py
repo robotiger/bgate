@@ -287,6 +287,9 @@ if __name__ == '__main__':
         config["brokerport"]=1883
         config["topic"]="BFG5"
         config.sync()    
+    print("Print configuration")
+    for c in config:
+        print(c,config[c])        
     #argv=sys.argv
     argv=["i","/dev/ttyS1"]
     for  arg in range(1,len(argv)):
@@ -296,9 +299,9 @@ if __name__ == '__main__':
     
     
     #app.run(debug=True)
-    #while True:
-    #    time.sleep(1)
-    t=input("Enter to exit")
+    while True:
+        time.sleep(1)
+    #t=input("Enter to exit")
     
     for  b in ls:
         ls[b].stop()
