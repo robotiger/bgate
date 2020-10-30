@@ -318,33 +318,33 @@ def get_tasks():
     </html>
     """
 
-
-ls={}
-config=shelve.open("/home/bfg/bgate/config")
-if not "macgate" in config:
-    config["macgate"]="%012x"%uuid.getnode()
-    config["uuid"]=uuid.uuid1()
-    config["broker"]="192.168.31.204"
-    config["brokerport"]=1883
-    config["topic"]="BFG5"
-
-#argv=sys.argv
-argv=["i","/dev/ttyS1"]
-for  arg in range(1,len(argv)):
-    print("<",arg,">")
-    ls[arg]=SerialBgate(argv[arg])
-    ls[arg].start()
-
-
-app.run(debug=True)
-
-t=input("Enter to exit")
-
-for  b in ls:
-    ls[b].stop()
-    ls[b].join()
-
-
-
-
-
+if __name__ == '__main__':
+    ls={}
+    config=shelve.open("/home/bfg/bgate/config")
+    if not "macgate" in config:
+        config["macgate"]="%012x"%uuid.getnode()
+        config["uuid"]=uuid.uuid1()
+        config["broker"]="192.168.31.204"
+        config["brokerport"]=1883
+        config["topic"]="BFG5"
+    
+    #argv=sys.argv
+    argv=["i","/dev/ttyS1"]
+    for  arg in range(1,len(argv)):
+        print("<",arg,">")
+        ls[arg]=SerialBgate(argv[arg])
+        ls[arg].start()
+    
+    
+    app.run(debug=True)
+    
+    t=input("Enter to exit")
+    
+    for  b in ls:
+        ls[b].stop()
+        ls[b].join()
+    
+    
+    
+    
+    
