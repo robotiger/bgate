@@ -25,6 +25,12 @@ import hashlib
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = "my super secret key"
+
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -329,11 +335,7 @@ for  arg in range(1,len(argv)):
     ls[arg]=SerialBgate(argv[arg])
     ls[arg].start()
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.secret_key = "my super secret key"
 
-app.wsgi_app = ProxyFix(app.wsgi_app)
 app.run(debug=True)
 
 t=input("Enter to exit")
