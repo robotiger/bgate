@@ -24,12 +24,18 @@ import shelve
 import hashlib
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+UPLOAD_FOLDER = '/var/www/upload'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "my super secret key"
 
 app.wsgi_app = ProxyFix(app.wsgi_app)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 #import blescan
 #import bluetooth._bluetooth as bluez
@@ -312,12 +318,6 @@ def get_tasks():
     </html>
     """
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-UPLOAD_FOLDER = '/var/www/upload'
 
 ls={}
 config=shelve.open("/home/bfg/bgate/config")
