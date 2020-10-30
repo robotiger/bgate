@@ -1,0 +1,2 @@
+gunicorn bgate:app
+

@@ -1,0 +1,17 @@
+[Unit]
+Description = Gunicorn instance to serve Barry
+After=network.target
+
+[Service]
+User=bfg
+Group=bfg
+PIDFile=/var/tmp/bgate.pid
+WorkingDirectory=/home/bar/bgate
+ExecStart=/bin/bash /home/bar/bgate/bgate.sh
+
+Restart=on-failure
+RestartSec=15s
+
+[Install]
+WantedBy=multi-user.target
+
