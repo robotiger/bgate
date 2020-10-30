@@ -241,82 +241,40 @@ class SerialBgate(threading.Thread):
                                 self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
 #                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
                                                     
-#                            print(self.port,end=': ')
-#                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-#                            for d in self.datapack:
-#                                print("%02x "%d,end='')
-#                            print(' ')
-
-#                            if self.datapack[0:6] in bfiltermac :
-                            #print(dp["mac"].hex(),dp["rssi"])
                             #logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
-                            #self.port,
-                            #int(self.datapack[2]),
-                            #int(self.datapack[3]),
-                            #int(self.datapack[4]),
-                            #int(self.datapack[5]),
-                            #int(self.datapack[6]),
-                            #int(self.datapack[7]), #mac
-
-                            #int(self.datapack[19]), #manid
-                            #int(self.datapack[18]), #manid2
-
-                            #int(self.datapack[23]), #dev type
-                            #int(self.datapack[24]), #dev subtype
-                            #int(self.datapack[25]), #id
-                            #int(self.datapack[26]), #id
-                            #int(self.datapack[27]), #id
-                            #int(self.datapack[28]), #id
-                            #int(self.datapack[29]), #id
-                            #int(self.datapack[30]), #id
-
-                            #int(self.datapack[21])*256+int(self.datapack[22]),
-
-                            #int(self.datapack[36]), #txpower
-                            #int(self.datapack[11])-256, #rssi
-                            #int(self.datapack[12]), #channel
-
 
                                                     
-##                            int(self.datapack[6])*256+int(self.datapack[7]),
-##                            int(self.datapack[8]),
-##                            int(self.datapack[9]),
-##                            int(self.datapack[10]),# if int(self.datapack[10]>127,
-##                            int(self.datapack[11])-256,
-##                            int(self.datapack[12]),
-
-                            #))
             
 
 
         
     
     
-    def readp(self):
-        if not self.queue.empty():
-            return self.queue.get()
-        else:
-            return None
+    #def readp(self):
+        #if not self.queue.empty():
+            #return self.queue.get()
+        #else:
+            #return None
 
 
-@app.route('/', methods=['GET','PUT','POST'])
-def get_tasks():
+#@app.route('/', methods=['GET','PUT','POST'])
+#def get_tasks():
 
-    return """
-    <html>
-    <head>
-    <title> my shlagbaum </title>
-    <meta charset="UTF-8">
-    </head>
-    <body>
-    <p>
-    API present  <br><br>
-    </p>
-    <p>
-    </p>
-    </body>
-    </html>
-    """
+    #return """
+    #<html>
+    #<head>
+    #<title> my shlagbaum </title>
+    #<meta charset="UTF-8">
+    #</head>
+    #<body>
+    #<p>
+    #API present  <br><br>
+    #</p>
+    #<p>
+    #</p>
+    #</body>
+    #</html>
+    #"""
 
 if __name__ == '__main__':
     ls={}
