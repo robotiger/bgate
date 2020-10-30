@@ -286,7 +286,7 @@ if __name__ == '__main__':
         config["broker"]="192.168.31.204"
         config["brokerport"]=1883
         config["topic"]="BFG5"
-    
+        config.sync()    
     #argv=sys.argv
     argv=["i","/dev/ttyS1"]
     for  arg in range(1,len(argv)):
