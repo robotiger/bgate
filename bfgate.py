@@ -102,7 +102,7 @@ len 44  change to 43
 
 
 def logi(s):
-    logname='/home/bfg/bgate/bdata'
+    logname='/home/bfg/bgate/bdata.log'
     logging.basicConfig(format='%(asctime)s | %(message)s', datefmt='%Y/%m/%d %H:%M:%S ', filename=logname, level=logging.INFO)
     logging.info(s)
     #print(s)
