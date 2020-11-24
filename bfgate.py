@@ -98,6 +98,18 @@ len 44  change to 43
 """
 
 
+import socket,fcntl,struct
+import requests
+import ipaddress
+
+def get_ip_address(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(), 0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15].encode('utf-8'))
+        )[20:24])
+
+
 
 
 
@@ -110,7 +122,6 @@ def logi(s):
 
 
 
-
 class SerialBgate(threading.Thread):
 
 
@@ -118,12 +129,31 @@ class SerialBgate(threading.Thread):
         print("__init__")
         threading.Thread.__init__(self)  
         self.port=port
-
+        self.isconnected=False
         self.queue = queue.Queue() 
         self.cnt = 0
         self.mqttclient=mqtt.Client(config["macgate"])
+        self.mqttclient.on_connect=on_connect
         self.mqttclient.connect(config["broker"],port=config["brokerport"])
-        #self.mqttclient.subscribe("
+        time.sleep(5)
+        if not self.isconnected:
+            self.mqttclient.connect(config["database"],port=config["brokerport"])
+            time.sleep(5)
+        if not self.isconnected:
+            quit()
+            
+        
+        
+    
+    def on_connect(self,client,eserdata,flag,rc):
+        global isconnected
+        if rc==0:
+            print("connected ok")
+            isconnected= True
+            mc.loop_start()        
+        else:
+            print("bad connect",rc)
+            isconnected= False
 
     def run(self): 
         print("run")
@@ -280,6 +310,21 @@ class SerialBgate(threading.Thread):
 if __name__ == '__main__':
     ls={}
     config=shelve.open("/home/bfg/bgate/config")
+    
+    try:
+        resp=os.popen("nmap --open -p 5432 %s.%s.%s.0/24"%
+                      tuple(get_ip_address('wlan0').split('.')[0:3])
+                     )
+        res=resp.readlines()
+        for d in res:
+            #print(d[0:20])
+            if d[0:20]=='Nmap scan report for':
+                config["database"]=d[21:]
+    except:
+        print('wifi is not connected')
+    
+    
+    
     if not "macgate" in config:
         config["macgate"]="%012x"%uuid.getnode()
         config["uuid"]=uuid.uuid1()

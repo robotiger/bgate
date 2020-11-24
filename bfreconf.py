@@ -9,3 +9,4 @@ config["broker"]="192.168.31.204"
 config["brokerport"]=1883
 config["topic"]="BFG5"
 config.sync() 
+
