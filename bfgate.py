@@ -337,7 +337,10 @@ if __name__ == '__main__':
         for d in res:
             #print(d[0:20])
             if d[0:20]=='Nmap scan report for':
-                config["database"]=d[21:]
+                if '(' in d:
+                    config["database"]=d[d.find('(')+1:d.find(')')]
+                else:    
+                    config["database"]=d[21:-1]
     except:
         print('wifi is not connected')
     
