@@ -146,9 +146,9 @@ class SerialBgate(threading.Thread):
             try:
                 self.mqttclient.connect(config["database"],port=config["brokerport"])
                 time.sleep(1)
-        except:
-            self.isconnected=False
-            pass 
+            except:
+                self.isconnected=False
+                pass 
         if not self.isconnected:
             print("fall - quit")
             quit()
