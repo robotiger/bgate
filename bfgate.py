@@ -139,6 +139,7 @@ class SerialBgate(threading.Thread):
             self.mqttclient.loop_start() 
             self.mqttclient.connect(config["broker"],port=config["brokerport"])
             time.sleep(1)
+            self.isconnected=True
         except:
             self.isconnected=False
             pass
@@ -148,6 +149,7 @@ class SerialBgate(threading.Thread):
                 self.mqttclient.loop_start()                 
                 self.mqttclient.connect(config["database"],port=config["brokerport"])
                 time.sleep(1)
+                self.isconnected=True
             except:
                 self.isconnected=False
                 pass 
