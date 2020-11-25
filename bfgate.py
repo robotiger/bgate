@@ -139,7 +139,7 @@ class SerialBgate(threading.Thread):
             
             self.mqttclient.connect(config["database"],port=config["brokerport"])
             time.sleep(1)
-            self.mqttclient.loop_start() 
+            #self.mqttclient.loop_start() 
             self.isconnected=True
         except:
             self.isconnected=False
@@ -331,6 +331,7 @@ if __name__ == '__main__':
     try:
         resp=os.popen("nmap --open -p 5432 %s.%s.%s.0/24"%
                       tuple(get_ip_address('wlan0').split('.')[0:3])
+                      #tuple(get_ip_address('wlp7s0').split('.')[0:3])
                      )
         res=resp.readlines()
         for d in res:
