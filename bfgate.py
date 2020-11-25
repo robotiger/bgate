@@ -158,14 +158,15 @@ class SerialBgate(threading.Thread):
             quit()
             
         
-        
+    def on_disconnect(self,client,userdata,rc):
+        logi("disconnect mqtt %d"%rc)
+        quit()
     
     def on_connect(self,client,eserdata,flag,rc):
         global isconnected
         if rc==0:
             print("connected ok")
-            isconnected= True
-                   
+            isconnected= True   
         else:
             print("bad connect",rc)
             isconnected= False
