@@ -133,7 +133,7 @@ class SerialBgate(threading.Thread):
         self.queue = queue.Queue() 
         self.cnt = 0
         self.mqttclient=mqtt.Client(config["macgate"])
-        self.mqttclient.on_connect=on_connect
+        self.mqttclient.on_connect=self.on_connect
         print("try to connect ",config["broker"],config["brokerport"])
         self.mqttclient.connect(config["broker"],port=config["brokerport"])
         time.sleep(5)
