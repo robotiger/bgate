@@ -135,12 +135,20 @@ class SerialBgate(threading.Thread):
         self.mqttclient=mqtt.Client(config["macgate"])
         self.mqttclient.on_connect=self.on_connect
         print("try to connect ",config["broker"],config["brokerport"])
-        self.mqttclient.connect(config["broker"],port=config["brokerport"])
-        time.sleep(5)
+        try:
+            self.mqttclient.connect(config["broker"],port=config["brokerport"])
+            time.sleep(1)
+        except:
+            self.isconnected=False
+            pass
         if not self.isconnected:
             print("fall\ntry to connect ",config["database"],config["brokerport"])
-            self.mqttclient.connect(config["database"],port=config["brokerport"])
-            time.sleep(5)
+            try:
+                self.mqttclient.connect(config["database"],port=config["brokerport"])
+                time.sleep(1)
+        except:
+            self.isconnected=False
+            pass 
         if not self.isconnected:
             print("fall - quit")
             quit()
