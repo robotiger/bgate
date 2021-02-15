@@ -121,11 +121,13 @@ def logi(s):
 
 
 
+gmqttclient=None
 
 class SerialBgate(threading.Thread):
 
 
     def __init__(self,port):
+        global gmqttclient
         print("__init__")
         threading.Thread.__init__(self)  
         self.port=port
@@ -133,6 +135,7 @@ class SerialBgate(threading.Thread):
         self.queue = queue.Queue() 
         self.cnt = 0
         self.mqttclient=mqtt.Client(config["macgate"])
+        gmqttclient=self.mqttclient
         self.mqttclient.on_connect=self.on_connect
         print("try to connect ",config["database"],config["brokerport"])
         try:
@@ -323,6 +326,42 @@ class SerialBgate(threading.Thread):
     #</body>
     #</html>
     #"""
+
+class wifistate(threading.Thread):
+
+
+    def __init__(self):
+        print("__init__")
+        threading.Thread.__init__(self)  
+
+    def wifitest(self):
+        while(self.runing):
+            try:
+                resp=os.popen("nmcli device wifi list")        
+                res=resp.readlines()
+                for red in res:
+                    col = red.split()
+                    if col[0]=='*':
+                        #print(col[6])
+                        dpo["gate"]=config["macgate"]
+                        wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate"=config["macgate"]}
+                        self.mqttclient.publish("WIFI",msgpack.packb(wifid,use_bin_type=True))
+                
+
+            except:
+                print('wifi is not connected') 
+            time.sleep(30)
+        
+    def run(self): 
+        print("run")
+        self.runing=True
+        self.wifitest()
+        
+        
+    def stop(self):
+        print("stop")
+        self.runing=False        
+
 
 if __name__ == '__main__':
     ls={}
