@@ -344,7 +344,7 @@ class wifistate(threading.Thread):
                     if col[0]=='*':
                         #print(col[6])
                         dpo["gate"]=config["macgate"]
-                        wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate"=config["macgate"]}
+                        wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate":config["macgate"]}
                         self.mqttclient.publish("WIFI",msgpack.packb(wifid,use_bin_type=True))
                 
 
