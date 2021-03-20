@@ -137,6 +137,10 @@ class SerialBgate(threading.Thread):
         self.mqttclient=mqtt.Client(config["macgate"])
         gmqttclient=self.mqttclient
         self.mqttclient.on_connect=self.on_connect
+        self.mqttclient.on_disconnect=self.on_disconnect
+        self.Connect()
+        
+    def Connect():
         print("try to connect ",config["database"],config["brokerport"])
         try:
             
@@ -160,7 +164,16 @@ class SerialBgate(threading.Thread):
         if not self.isconnected:
             print("fall - quit")
             quit()
-            
+    def Publish(topic,msg):
+        ret=self.mqttclient.publish(topic,msg)
+        if ret[0]!=0:
+            self.mqttclient.disconnect()
+            time.sleep(1)
+            self.mqttclient.connect(config["broker"],port=config["brokerport"])
+            time.sleep(1)
+            ret=self.mqttclient.publish(topic,msg)
+            if ret[0]!=0:
+                logi('cant sent message to %s'%(topic))
         
     def on_disconnect(self,client,userdata,rc):
         logi("disconnect mqtt %d"%rc)
@@ -288,8 +301,7 @@ class SerialBgate(threading.Thread):
 
                             if "mfg" in dp:
                                 #print(config["topic"],dp["gate"],dp["mfg"],dp["mac"],dp["rssi"],dp["band"],dp["txpower"],dp["cnt"],dp["uuid"])
-                                ret = self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
-                                print(ret)
+                                self.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
                                 logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
 #                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
                                                     
