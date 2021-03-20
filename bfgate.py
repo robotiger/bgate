@@ -288,8 +288,9 @@ class SerialBgate(threading.Thread):
 
                             if "mfg" in dp:
                                 #print(config["topic"],dp["gate"],dp["mfg"],dp["mac"],dp["rssi"],dp["band"],dp["txpower"],dp["cnt"],dp["uuid"])
-                                self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
-                                logi("%s %s %d %d %d %d %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"]))
+                                ret = self.mqttclient.publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
+                                print(ret)
+                                logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
 #                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
                                                     
                                 #logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
