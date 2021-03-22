@@ -167,13 +167,16 @@ class SerialBgate(threading.Thread):
     def Publish(topic,msg):
         ret=self.mqttclient.publish(topic,msg)
         if ret[0]!=0:
-            self.mqttclient.disconnect()
-            time.sleep(1)
-            self.mqttclient.connect(config["broker"],port=config["brokerport"])
-            time.sleep(1)
-            ret=self.mqttclient.publish(topic,msg)
-            if ret[0]!=0:
-                logi('cant sent message to %s'%(topic))
+            logi("cant sent mqtt %s %s"%(topic,ret))
+            quit()
+            
+            #self.mqttclient.disconnect()
+            #time.sleep(1)
+            #self.mqttclient.connect(config["broker"],port=config["brokerport"])
+            #time.sleep(1)
+            #ret=self.mqttclient.publish(topic,msg)
+            #if ret[0]!=0:
+                #logi('cant sent message to %s'%(topic))
         
     def on_disconnect(self,client,userdata,rc):
         logi("disconnect mqtt %d"%rc)
