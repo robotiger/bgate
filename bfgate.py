@@ -140,7 +140,7 @@ class SerialBgate(threading.Thread):
         self.mqttclient.on_disconnect=self.on_disconnect
         self.Connect()
         
-    def Connect():
+    def Connect(self):
         print("try to connect ",config["database"],config["brokerport"])
         try:
             
@@ -164,7 +164,7 @@ class SerialBgate(threading.Thread):
         if not self.isconnected:
             print("fall - quit")
             quit()
-    def Publish(topic,msg):
+    def Publish(self,topic,msg):
         ret=self.mqttclient.publish(topic,msg)
         if ret[0]!=0:
             logi("cant sent mqtt %s %s"%(topic,ret))
