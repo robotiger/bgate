@@ -240,7 +240,8 @@ class SerialBgate(threading.Thread):
                     dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
             if mfg=='16ffb1bf': #andrew beacon ble5
                 dpo["mfg"]=2
-                dpo["uuid"]='00000000'+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
+                #dpo["uuid"]='00000000'+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
+                dpo["uuid"]=dpin[4:8].hex()+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
                 dpo["cnt"]=dpin[21]*256+dpin[22]
                 dpo["ext"]=dpin[31]
                 dpo["exd"]=int(dpin[32:36].hex(),16)
