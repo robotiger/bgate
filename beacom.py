@@ -263,10 +263,10 @@ class ASerial():
     def handleSRead(self):
         if dlevel <= DebugLevel.info:
             print("[INFO] Start serial read thread")
-        while (self.running):
-            sib = self.ser.read(1024)
-            if len(sib) > 0:
-                self.s_read_queue.put(sib)
+        #while (self.running):
+        #    sib = self.ser.read(1024)
+        #    if len(sib) > 0:
+        #        self.s_read_queue.put(sib)
         if dlevel <= DebugLevel.info:
             print("[INFO] Stop serial read thread")
 
@@ -274,6 +274,9 @@ class ASerial():
         if dlevel <= DebugLevel.info:
             print("[INFO] Start work thread")
         while (self.running):
+            sib = self.ser.read(1024)
+            if len(sib) > 0:
+                self.s_read_queue.put(sib)            
             # work with input data
             while (self.input_queue.qsize() > 0):
                 self.input_str = self.input_queue.get()
