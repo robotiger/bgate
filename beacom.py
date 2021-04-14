@@ -582,7 +582,7 @@ class ASerial():
 # main
 if (__name__ == '__main__'):
     try:
-        dlevel = DebugLevel.debug
+        dlevel = DebugLevel.info
         aser = ASerial(port="/dev/ttyS1", baudrate=115200)
         aser.start()
     except Exception:
