@@ -164,6 +164,7 @@ class SerialBgate(threading.Thread):
         if not self.isconnected:
             print("fall - quit")
             quit()
+            
     def Publish(self,topic,msg):
         ret=self.mqttclient.publish(topic,msg)
         if ret[0]!=0:
@@ -433,4 +434,39 @@ if __name__ == '__main__':
     
     
     
-    
+
+
+"""
+нужно доустановить пакет dnsmasq-base
+
+список действующих подключений. если подключенний нет создадим хотспот
+nmcli conn show -a
+
+список устройств
+nmcli dev
+
+
+Подключаться к сети вайфай
+nmcli dev wifi connect Xiaomi1 password "12345pibfg"
+
+создать хотспот.   указывать ssid нужно уникальный. можно по маку или уиду
+nmcli dev wifi hotspot ifname wlx1cbfce465b17 ssid tea password "12345pibfg"
+nmcli dev wifi hotspot ssid tea password "12345pibfg"
+
+отключить hotspot, 
+nmcli con down Hotspot
+
+отключенный хоспот включить
+nmcli con up Hotspot
+
+
+удалить хотспот
+nmcli conn del Hotspot
+
+Характеристики подключения пожалуй интересны мощность сигнала и канал
+nmcli dev wifi
+IN-USE  SSID     MODE            CHAN  RATE      SIGNAL  BARS  SECURITY 
+*       Xiaomi1  Инфраструктура  6     117 МБ/с  71      ▂▄▆_  WPA2     
+
+
+"""
