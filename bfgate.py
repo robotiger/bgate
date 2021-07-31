@@ -468,5 +468,5 @@ nmcli dev wifi
 IN-USE  SSID     MODE            CHAN  RATE      SIGNAL  BARS  SECURITY 
 *       Xiaomi1  Инфраструктура  6     117 МБ/с  71      ▂▄▆_  WPA2     
 
-hcitool
+hcitool test
 """
