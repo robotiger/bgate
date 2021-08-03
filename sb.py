@@ -10,6 +10,9 @@ import datetime
 import logging
 import uuid
 import zlib
+import hashlib
+from Crypto.Cipher import AES
+from struct import *
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -19,6 +22,7 @@ import zlib
 #import matplotlib.animation as animation
 
 filtermac=[
+[0x00, 0x01, 0x95, 0x3f, 0xc8, 0x9b]
 #[0x62,0x66,0xdc,0xc1,0xde,0xfb],
 #[0xa5,0x75,0xcf,0x0c,0x91,0x97],
 #[0xe1,0x8d,0x8d,0x38,0xc4,0x24],
@@ -29,7 +33,8 @@ filtermac=[
 ]
 
 bfiltermac=[
-b'\xaf\xbf\xcf\xdf\xef\xff',
+b'\x00\x01\x95\x3f\xc8\x9b',
+#b'\xaf\xbf\xcf\xdf\xef\xff',
 #b'\x62\x66\xdc\xc1\xde\xfb',
 #b'\xa5\x75\xcf\x0c\x91\x97',
 #b'\xe1\x8d\x8d\x38\xc4\x24',
@@ -46,6 +51,56 @@ def logi(s):
     logging.info(s)
     print(s)
 
+
+class makemesage:
+    def __init__(self):
+        self.key= b'fkytbwpt69xsbna3'
+        #           0123456789012345
+        self.salt=b'lrjk;rdfkdldkhcngfle45'
+    def message(self,cfg,data):
+        once=AES.new(self.key,AES.MODE_EAX).nonce
+        self.ronce=once[:4]
+        print(self.ronce.hex())
+        self.nonce=hashlib.sha1(self.ronce+self.salt)
+        print(self.nonce.hexdigest())
+        if len(data)>19:
+            return None
+        mes=pack('2sh%ds'%len(data),once[:2],cfg,data)
+        coded,tag = AES.new(self.key,AES.MODE_EAX,nonce=self.nonce.digest()).encrypt_and_digest(mes) 
+        lc=len(coded)
+        lr=len(self.ronce)
+        print(coded.hex())
+        return pack('5B4s23s', lc+4+lr,lc+3+lr,0xff,0xb1,0xbf,self.ronce,coded+b'\x00'*(24-lc))
+
+    def decode(self,mes):
+#16 ff b1 bf c3 79 4a 0e 04 fb e1 e4 03 59 40 db 75 1b dc 28 db b3 75 
+#00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
+#len        !nonce      ! mes
+                        # once! cfg ! data
+        dlina=mes[0]
+        ffmfg=mes[1:4]
+        once=mes[4:8]
+        coded=mes[8:dlina+1]
+        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+        if ffmfg.hex()=='ffb1bf':
+            nonce=hashlib.sha1(once+self.salt)
+            rcv =AES.new(self.key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
+            ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
+            print(ronce==once[:2],cfg,data)
+
+def decode(mes):
+    key= b'fkytbwpt69xsbna3'
+    salt=b'lrjk;rdfkdldkhcngfle45'
+    dlina=mes[0]
+    ffmfg=mes[1:4]
+    once=mes[4:8]
+    coded=mes[8:dlina+1]
+    print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+    if ffmfg.hex()=='ffb1bf':
+        nonce=hashlib.sha1(once+salt)
+        rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
+        ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
+        print(ronce==once[:2],cfg,data)
 
 
 class SerialBgate(threading.Thread):
@@ -80,7 +135,7 @@ class SerialBgate(threading.Thread):
                 sib=ser.read()
                 if len(sib)>0:
                     ib=sib[0]
-#                    print(sib,ib)
+#                    print(sib,ib) #f
                     if self.cnt==0:
                         if ib==0xab:
                             self.cnt=1
@@ -115,12 +170,15 @@ class SerialBgate(threading.Thread):
 
 #                        print(self.datapack[39:],b"\x03\x08HB")
                         if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
-
-                            print(self.port,end=': ')
-                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-                            for d in self.datapack:
-                                print("%02x "%d,end='')
-                            print(' ')
+                            if self.datapack[2:8] in bfiltermac :
+#                            if True:
+                                print(self.datapack[0:6].hex())
+                                print(self.port,end=': ')
+                                print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
+                                for d in self.datapack:
+                                    print("%02x "%d,end='')
+                                print(' ')
+                                decode(self.datapack[13:])
 #                   
 #                            print("part for crc",end=': ')
 #                            dp=self.datapack[20:37]
@@ -199,11 +257,12 @@ class SerialBgate(threading.Thread):
 
 
 ls={}
+#M=makemessage()
+
 for  arg in range(1,len(sys.argv)):
     print("<",arg,">")
     ls[arg]=SerialBgate(sys.argv[arg])
     ls[arg].start()
-
 t=input("Enter to exit")
 
 for  b in ls:
