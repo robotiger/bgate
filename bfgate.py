@@ -22,6 +22,10 @@ import requests
 import threading
 import shelve
 import hashlib
+import nmcli
+import time
+
+
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 UPLOAD_FOLDER = '/var/www/upload'
@@ -352,6 +356,15 @@ class wifistate(threading.Thread):
     def __init__(self):
         print("__init__")
         threading.Thread.__init__(self)  
+        nmcli.disable_use_sudo()
+        
+    def wifitest(self):            
+        for d in nmcli.device.wifi():
+            if d.in_use:
+                wifid=d.to_json()
+                self.mqtt
+                #print(d)
+                #nmcli.connection.down(d.ssid)        
 
     def wifitest(self):
         while(self.runing):
@@ -460,7 +473,7 @@ nmcli con down Hotspot
 nmcli con up Hotspot
 
 
-удалить хотспот
+удалить хотспотТекущее время 0
 nmcli conn del Hotspot
 
 Характеристики подключения пожалуй интересны мощность сигнала и канал

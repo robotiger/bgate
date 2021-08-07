@@ -7,14 +7,17 @@ sudo groupadd gpio
 sudo usermod -aG gpio bfg
 
 pip3 install OPi.GPIO 
-pip3 install setuptools==21.2.1
+#pip3 install setuptools==21.2.1
+pip3 install setuptools
 pip3 install wheel gunicorn flask #проверить порядок установки
 pip3 install requests
 pip3 install pyserial
 pip3 install paho-mqtt
 pip3 install msgpack
 pip3 uninstall werkzeug
-pip3 install werkzeug==0.16.0
+#pip3 install werkzeug==0.16.0
+pip3 install werkzeug
+pip3 install nmcli
 
 #sudo cp barry.conf /etc/nginx/sites-available
 #sudo ln -s /etc/nginx/sites-available/barry.conf /etc/nginx/sites-enabled/
