@@ -580,7 +580,7 @@ class ASerial():
 if (__name__ == '__main__'):
     try:
         dlevel = DebugLevel.info
-        aser = ASerial(port="COM4", baudrate=115200)
+        aser = ASerial(port="/dev/ttyS1", baudrate=115200)
         aser.start()
     except Exception:
         if dlevel <= DebugLevel.warning:
