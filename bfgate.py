@@ -31,7 +31,7 @@ import socket,fcntl,struct
 import requests
 import ipaddress
 #local modules
-import config
+import configbfg
 import gpledthread
 
 
