@@ -8,6 +8,8 @@ class gpled(Thread):
         # Call the Thread class's init function
         Thread.__init__(self)
         self.prog=newprog
+        g.setwarnings(False)
+        g.setmode(g.BOARD)        
         
     def setprog(self,newprog):
         print("newprog",newprog)
