@@ -381,7 +381,7 @@ class ASerial():
         elif (main_part == "ping"):
             try:
                 cmd = Command(1, [])
-                print('cmd:',cmd.hex(' '))
+                
                 self.ser.write(cmd.encode())
             except Exception:
                 print("Неправильная команда")
@@ -389,7 +389,7 @@ class ASerial():
         elif (main_part == "info"):
             try:
                 cmd = Command(2, [])
-                print('cmd:',cmd.hex(' '))
+                
                 self.ser.write(cmd.encode())
             except Exception:
                 print("Неправильная команда")
@@ -401,7 +401,7 @@ class ASerial():
                     print("Неправильная длина команды, проверьте аргументы")
                 else:
                     cmd = Command(3, cmdargs)
-                    print('cmd:',cmd.hex(' '))
+                    
 
                     self.ser.write(cmd.encode())
             except Exception:
@@ -431,7 +431,7 @@ class ASerial():
                     print("Неправильная длина команды, проверьте аргументы")
                 else:
                     cmd = Command(4, cmdargs)
-                    print('cmd:',cmd.hex(' '))
+                    
                     self.ser.write(cmd.encode())
             except Exception:
                 print("Неправильная команда")
@@ -453,7 +453,7 @@ class ASerial():
                     print("Неправильная длина команды, проверьте аргументы")
                 else:
                     cmd = Command(4, cmdargs)
-                    print('cmd:',cmd.hex(' '))
+                    
                     self.ser.write(cmd.encode())
             except Exception:
                 print("Неправильная команда")
@@ -467,7 +467,7 @@ class ASerial():
                     print("Неправильная длина команды, проверьте аргументы")
                 else:
                     cmd = Command(4, cmdargs)
-                    print('cmd:',cmd.hex(' '))
+                    
                     
                     self.ser.write(cmd.encode())
             except Exception:
@@ -511,7 +511,7 @@ class ASerial():
                     print("Неправильная длина команды, проверьте аргументы")
                 else:
                     cmd = Command(5, cmdargs)
-                    print('cmd:',cmd.hex(' '))
+                    
                     self.ser.write(cmd.encode())
             except Exception:
                 print("Неправильная команда")

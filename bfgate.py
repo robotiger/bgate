@@ -3,6 +3,7 @@ import serial
 import math
 import os
 import sys
+import shutil
 import threading
 import time
 import queue
@@ -24,6 +25,7 @@ import shelve
 import hashlib
 import nmcli
 import time
+import config
 
 
 
@@ -127,6 +129,63 @@ def logi(s):
 
 gmqttclient=None
 
+
+
+
+class makemesage:
+    def __init__(self):
+        self.key= b'fkytbwpt69xsbna3'
+        #           0123456789012345
+        self.salt=b'lrjk;rdfkdldkhcngfle45'
+    def message(self,cfg,data):
+        once=AES.new(self.key,AES.MODE_EAX).nonce
+        self.ronce=once[:4]
+        print(self.ronce.hex())
+        self.nonce=hashlib.sha1(self.ronce+self.salt)
+        print(self.nonce.hexdigest())
+        if len(data)>19:
+            return None
+        mes=pack('2sh%ds'%len(data),once[:2],cfg,data)
+        coded,tag = AES.new(self.key,AES.MODE_EAX,nonce=self.nonce.digest()).encrypt_and_digest(mes) 
+        lc=len(coded)
+        lr=len(self.ronce)
+        print(coded.hex())
+        return pack('5B4s23s', lc+4+lr,lc+3+lr,0xff,0xb1,0xbf,self.ronce,coded+b'\x00'*(24-lc))
+
+    def decode(self,mes):
+#16 ff b1 bf c3 79 4a 0e 04 fb e1 e4 03 59 40 db 75 1b dc 28 db b3 75 
+#00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
+#len        !nonce      ! mes
+                        # once! cfg ! data
+        dlina=mes[0]
+        ffmfg=mes[1:4]
+        once=mes[4:8]
+        coded=mes[8:dlina+1]
+        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+        if ffmfg.hex()=='ffb1bf':
+            nonce=hashlib.sha1(once+self.salt)
+            rcv =AES.new(self.key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
+            ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
+            print(ronce==once[:2],cfg,data)
+
+def decode(mes):
+    key= b'fkytbwpt69xsbna3'
+    salt=b'lrjk;rdfkdldkhcngfle45'
+    dlina=mes[0]
+    ffmfg=mes[1:4]
+    once=mes[4:8]
+    coded=mes[8:dlina+1]
+    print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+    if ffmfg.hex()=='ffb1bf':
+        nonce=hashlib.sha1(once+salt)
+        rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
+        ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
+        print(ronce==once[:2],cfg,data)
+
+
+
+
+
 class SerialBgate(threading.Thread):
 
 
@@ -227,7 +286,7 @@ class SerialBgate(threading.Thread):
             dpo["txpower"]=-8
             
             
-        if len(dpin)>=43: #наши пакеты 43
+        if len(dpin)==43: #наши пакеты 43
             dpo["gate"]=config["macgate"]
             dpo["mac"]=dpin[2:8].hex()
             dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
@@ -253,12 +312,21 @@ class SerialBgate(threading.Thread):
                 dpo["txpower"]=dpin[36] if dpin[36] < 127 else dpin[36]-256
         return dpo            
 
+    def CommandLED(self,mac,r,g,b,t,p,o):
+        ## send c
+        ##
+        try:
+            enc_data= struct.pack('>5s6s3B3h',b'\xab\xba\x0f\00\04',bytes.fromhex(mac),r,g,b,t,p,o)
+        except:
+            return None
+        crc32=zlib.crc32(enc_data)
+        self.ser.write(struct.pack('>20sH',enc_data,crc32&0xffff))
 
     def SerialDaemon(self):
        
-        with serial.Serial(self.port, 115200, timeout=1) as ser:  
+        with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             while(self.runing):
-                sib=ser.read()
+                sib=self.ser.read()
                 if len(sib)>0:
                     ib=sib[0]
 #                    print(sib,ib)
@@ -324,31 +392,7 @@ class SerialBgate(threading.Thread):
         
     
     
-    #def readp(self):
-        #if not self.queue.empty():
-            #return self.queue.get()
-        #else:
-            #return None
 
-
-#@app.route('/', methods=['GET','PUT','POST'])
-#def get_tasks():
-
-    #return """
-    #<html>
-    #<head>
-    #<title> my shlagbaum </title>
-    #<meta charset="UTF-8">
-    #</head>
-    #<body>
-    #<p>
-    #API present  <br><br>
-    #</p>
-    #<p>
-    #</p>
-    #</body>
-    #</html>
-    #"""
 
 class wifistate(threading.Thread):
 
@@ -362,27 +406,28 @@ class wifistate(threading.Thread):
         for d in nmcli.device.wifi():
             if d.in_use:
                 wifid=d.to_json()
-                self.mqtt
+                #self.mqtt
                 #print(d)
                 #nmcli.connection.down(d.ssid)        
+        
 
-    def wifitest(self):
-        while(self.runing):
-            try:
-                resp=os.popen("nmcli device wifi list")        
-                res=resp.readlines()
-                for red in res:
-                    col = red.split()
-                    if col[0]=='*':
-                        #print(col[6])
-                        dpo["gate"]=config["macgate"]
-                        wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate":config["macgate"]}
-                        self.mqttclient.publish("WIFI",msgpack.packb(wifid,use_bin_type=True))
+    #def wifitest(self):
+        #while(self.runing):
+            #try:
+                #resp=os.popen("nmcli device wifi list")        
+                #res=resp.readlines()
+                #for red in res:
+                    #col = red.split()
+                    #if col[0]=='*':
+                        ##print(col[6])
+                        #dpo["gate"]=config["macgate"]
+                        #wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate":config["macgate"]}
+                        #self.mqttclient.publish("WIFI",msgpack.packb(wifid,use_bin_type=True))
                 
 
-            except:
-                print('wifi is not connected') 
-            time.sleep(30)
+            #except:
+                #print('wifi is not connected') 
+            #time.sleep(30)
         
     def run(self): 
         print("run")
@@ -395,35 +440,30 @@ class wifistate(threading.Thread):
         self.runing=False        
 
 
+
 if __name__ == '__main__':
     ls={}
-    config=shelve.open("/home/bfg/bgate/config")
+    #config=shelve.open("/home/bfg/bgate/config")
     
-    try:
-        resp=os.popen("nmap --open -p 5432 %s.%s.%s.0/24"%
-                      tuple(get_ip_address('wlan0').split('.')[0:3])
-                      #tuple(get_ip_address('wlp7s0').split('.')[0:3])
-                     )
-        res=resp.readlines()
-        for d in res:
-            #print(d[0:20])
-            if d[0:20]=='Nmap scan report for':
-                if '(' in d:
-                    config["database"]=d[d.find('(')+1:d.find(')')]
-                else:    
-                    config["database"]=d[21:-1]
-    except:
-        print('wifi is not connected')
+    #try:
+        #resp=os.popen("nmap --open -p 5432 %s.%s.%s.0/24"%
+                      #tuple(get_ip_address('wlan0').split('.')[0:3])
+                      ##tuple(get_ip_address('wlp7s0').split('.')[0:3])
+                     #)
+        #res=resp.readlines()
+        #for d in res:
+            ##print(d[0:20])
+            #if d[0:20]=='Nmap scan report for':
+                #if '(' in d:
+                    #config["database"]=d[d.find('(')+1:d.find(')')]
+                #else:    
+                    #config["database"]=d[21:-1]
+    #except:
+        #print('wifi is not connected')
     
     
     
-    if not "macgate" in config:
-        config["macgate"]="%012x"%uuid.getnode()
-        config["uuid"]=uuid.uuid1()
-        config["broker"]="192.168.31.204"
-        config["brokerport"]=1883
-        config["topic"]="BFG5"
-        config.sync()    
+  
     print("Print configuration")
     for c in config:
         print(c,config[c])        
