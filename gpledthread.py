@@ -13,7 +13,7 @@ class gpled(Thread):
         self.prog=newprog
     
     def run(self):
-        #print('start prog',self.prog)
+        print('start prog',self.prog)
         while len(self.prog)>0:
             for item in self.prog.split():
                 cmd=item[0].lower()
@@ -25,31 +25,31 @@ class gpled(Thread):
                         g.setup(12,g.OUT)
                         g.output(12,0)
                         g.cleanup(12)
-                        #print("red on")
+                        print("red on")
                     else:
                         g.setup(12,g.IN)
                         g.cleanup(12)
-                        #print("red off")
+                        print("red off")
                 if cmd=='g':
                     if val=='1':
                         g.setup(15,g.OUT)
                         g.output(15,0)
                         g.cleanup(15)
-                        #print("green on")
+                        print("green on")
                     else:
                         g.setup(15,g.IN)
                         g.cleanup(15)
-                        #print("green off")
+                        print("green off")
                 if cmd=='y':
                     if val=='1':
                         g.setup(11,g.OUT)
                         g.output(11,0)
                         g.cleanup(11)
-                        #print("yellow on")
+                        print("yellow on")
                     else:
                         g.setup(11,g.IN)
                         g.cleanup(11)
-                        #print("yellow off")                
+                        print("yellow off")                
                 time.sleep(0.05)
         
 def main():
