@@ -10,6 +10,7 @@ class gpled(Thread):
         self.prog=newprog
         
     def setprog(self,newprog):
+        print("newprog",newprog)
         self.prog=newprog
     
     def run(self):

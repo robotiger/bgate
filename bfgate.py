@@ -471,7 +471,7 @@ if __name__ == '__main__':
     
     gpled=gpledthread.gpled('r1 s1 r0 s1') 
     gpled.start()
-    #gpled.setprog('g1 s1 g0 s1')
+    gpled.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
     config=configbgate.Configuration()
