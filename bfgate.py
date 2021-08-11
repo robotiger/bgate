@@ -474,7 +474,7 @@ if __name__ == '__main__':
     #gpled.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
-    config=Configuration()
+    config=configbfg.Configuration()
     config.print()
     
     #for c in config:
