@@ -25,8 +25,14 @@ import shelve
 import hashlib
 import nmcli
 import time
-import config
 
+
+import socket,fcntl,struct
+import requests
+import ipaddress
+#local modules
+import config
+import gpledthread
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -104,9 +110,10 @@ len 44  change to 43
 """
 
 
-import socket,fcntl,struct
-import requests
-import ipaddress
+
+
+
+
 
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -462,7 +469,9 @@ if __name__ == '__main__':
         #print('wifi is not connected')
     
     
+    gpled=gpledthread.gpled('r1 s1 r0 s1') 
     
+    #gpled.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
     for c in config:

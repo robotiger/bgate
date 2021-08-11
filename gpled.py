@@ -11,7 +11,7 @@ def gpio(pin,state):
         GPIO.setup(gi,GPIO.OUT)
         GPIO.output(pin,0)
     else:
-        GPIO.setup(gi,GPIO.in)
+        GPIO.setup(gi,GPIO.IN)
         #GPIO.output(pin,0)
        
     
