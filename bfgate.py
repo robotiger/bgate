@@ -492,7 +492,7 @@ if __name__ == '__main__':
         time.sleep(1)
     #t=input("Enter to exit")
     
-    for  b in ls:
+    #for  b in ls:
         #ls[b].stop()
         #ls[b].join()
     
