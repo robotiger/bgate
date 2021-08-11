@@ -204,7 +204,7 @@ class SerialBgate(threading.Thread):
         self.isconnected=False
         self.queue = queue.Queue() 
         self.cnt = 0
-        self.mqttclient=mqtt.Client(config["macgate"])
+        self.mqttclient=mqtt.Client(config.read("macgate"))
         gmqttclient=self.mqttclient
         self.mqttclient.on_connect=self.on_connect
         self.mqttclient.on_disconnect=self.on_disconnect
@@ -483,8 +483,8 @@ if __name__ == '__main__':
     argv=["i","/dev/ttyS1"]
     for  arg in range(1,len(argv)):
         print("<",arg,">")
-        ls[arg]=SerialBgate(argv[arg])
-        ls[arg].start()
+        #ls[arg]=SerialBgate(argv[arg])
+        #ls[arg].start()
     
     
     #app.run(debug=True)
@@ -493,8 +493,8 @@ if __name__ == '__main__':
     #t=input("Enter to exit")
     
     for  b in ls:
-        ls[b].stop()
-        ls[b].join()
+        #ls[b].stop()
+        #ls[b].join()
     
     
     
