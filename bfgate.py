@@ -31,7 +31,7 @@ import socket,fcntl,struct
 import requests
 import ipaddress
 #local modules
-import configbfg
+import configbgate
 import gpledthread
 
 
@@ -474,7 +474,7 @@ if __name__ == '__main__':
     #gpled.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
-    config=configbfg.Configuration()
+    config=configbgate.Configuration()
     config.print()
     
     #for c in config:
