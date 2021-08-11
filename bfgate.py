@@ -474,8 +474,11 @@ if __name__ == '__main__':
     #gpled.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
-    for c in config:
-        print(c,config[c])        
+    config=Configuration()
+    config.print()
+    
+    #for c in config:
+    #    print(c,config[c])        
     #argv=sys.argv
     argv=["i","/dev/ttyS1"]
     for  arg in range(1,len(argv)):
