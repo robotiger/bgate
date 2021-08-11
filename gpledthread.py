@@ -55,7 +55,7 @@ class gpled(Thread):
         
 def main():
     # Create an object of Thread
-    th = FileLoaderThread('g1 s1 g0 s1')
+    th = gpled('g1 s1 g0 s1')
     # start the thread
     th.start()
     # print some logs in main thread
