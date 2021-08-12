@@ -83,7 +83,7 @@ class BlAdvCoder:
             for c in dpo:
                 if c in ['mac','mfg','uuid']:
                     dpo[c]=dpo[c].hex()
-            dpo['gate']=config['macgate']
+            #dpo['gate']=config['macgate']
             dpo['raw']=dpin.hex()
             return dpo
              
