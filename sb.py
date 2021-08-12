@@ -231,7 +231,7 @@ class SerialBgate(threading.Thread):
                                 #    print("%02x "%d,end='')
                                 #print(' ')
                                 print(self.datapack.hex(' '))
-                                if len(i)==43:
+                                if len(self.datapack)==43:
                                     d=BlAdvCoder.decode2(self.datapack)
                                     #publish
                                 if len(i)==44:
