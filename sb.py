@@ -222,8 +222,8 @@ class SerialBgate(threading.Thread):
 
 #                        print(self.datapack[39:],b"\x03\x08HB")
                         if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
-                            if self.datapack[2:8] in bfiltermac :
-#                            if True:
+#                            if self.datapack[2:8] in bfiltermac :
+                            if True:
                                 print(self.datapack[0:6].hex())
                                 print(self.port,end=': ')
                                 print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
