@@ -234,7 +234,7 @@ class SerialBgate(threading.Thread):
                                 if len(self.datapack)==43:
                                     d=BlAdvCoder.decode2(self.datapack)
                                     #publish
-                                if len(i)==44:
+                                if len(self.datapack)==44:
                                     d=BlAdvCoder.aesdecode(self.datapack)
                                     #config
                                 print(d)                                
