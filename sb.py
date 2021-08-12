@@ -93,10 +93,10 @@ class BlAdvCoder:
         key= b'fkytbwpt69xsbna3'
         salt=b'lrjk;rdfkdldkhcngfle45'
         dlina=dpin[13]
-        mfg=dpin[14:17]
+        mfg=dpin[14:17].hex()
 #        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-        if mfg.hex()=='ffb1bf':
-            dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dlina),dpin)        
+        if mfg=='ffb1bf':
+            dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dlina-7),dpin)         
             nonce=hashlib.sha1(once+salt)
             rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
             crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
