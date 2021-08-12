@@ -231,7 +231,14 @@ class SerialBgate(threading.Thread):
                                 #    print("%02x "%d,end='')
                                 #print(' ')
                                 print(self.datapack.hex(' '))
-                                BlAdvCoder.aesdecode(self.datapack)
+                                if len(i)==43:
+                                    d=BlAdvCoder.decode2(self.datapack)
+                                    #publish
+                                if len(i)==44:
+                                    d=BlAdvCoder.aesdecode(self.datapack)
+                                    #config
+                                print(d)                                
+                                #BlAdvCoder.aesdecode(self.datapack)
                                 #decode(self.datapack[13:])
 #                   
 #                            print("part for crc",end=': ')
