@@ -16,9 +16,9 @@ class BlAdvCoder:
             enc_data= struct.pack('>5s6s3B3h',b'\xab\xba\x0f\00\04',bytes.fromhex(mac),r,g,b,t,p,o)
         except:
             return None
-        crc32=zlib.crc32(enc_data)
+        crc=zlib.crc32(enc_data)&0xffff
         #print(crc32.to_bytes().hex(' '))
-        return struct.pack('>20sH',enc_data,crc32&0xffff)
+        return struct.pack('>20sH',enc_data,crc)
     
           
     @staticmethod
@@ -39,22 +39,23 @@ class BlAdvCoder:
             dpo['gate']=config['macgate']
             dpo['raw']=dpin.hex()
             return dpo
-        
+             
+
     @staticmethod   
-    def aesdecode(mes):
+    def aesdecode(dpin):
         key= b'fkytbwpt69xsbna3'
         salt=b'lrjk;rdfkdldkhcngfle45'
-        dlina=mes[0]
-        ffmfg=mes[1:4]
-        once=mes[4:8]
-        coded=mes[8:dlina+1]
-        #print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-        if ffmfg.hex()=='ffb1bf':
+        dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dpin[13]-7),dpin)        
+#        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+        if mfg.hex()=='ffb1bf':
             nonce=hashlib.sha1(once+salt)
             rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
-            ronce,cfg,data=struct.unpack('2sh%ds'%(dlina-11),rcv)
-            return (ronce==once[:2],cfg,data)        
-
+            crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
+            crcc=zlib.crc32(data)&0xffff
+            if crc==crcc:
+                return (cfg,data)
+            else:
+                return (0,'')
 
 """
 HB ble5 
@@ -103,6 +104,10 @@ if __name__=='__main__':
     config={'macgate':'0123456987654'}
     
     p=[
+        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf f3 72 d7 07 3d a5 7b 77 0a 1e ae 3f f3 ae f2 b2 cc f2 ff 63 6b 80 93 a4 ae f1 5a'),
+        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf f3 72 d7 07 3d a5 7b 77 0a 1e ae 3f f3 ae f2 b2 a0 f2 ff 63 6b 80 93 a4 ae f1 5a'),
+        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf c0 b6 66 44 c7 3c 4b 2e b0 bf 6b b6 76 86 80 8f f1 bf 40 c0 e2 88 fd dd b2 24 e3'),
+        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf c0 b6 66 44 c7 3c 4b 2e b0 bf 6b b6 76 86 80 8f f0 bf 40 c0 e2 88 fd dd b2 24 e3'),        
      bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf f3 72 d7 07 3d a5 7b 77 0a 1e ae 3f f3 ae f2 b2 cc f2 ff 63 6b 80 93 a4 ae f1 5a'),
      bytes.fromhex('00 03 be df b2 cf 7c a5 01 ff 7f be 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 bf b0 2e 70 dd b9 46 a0 cb 90 81 df 05 01 27 82 ec'),
      bytes.fromhex('00 03 c6 5a 9c f5 d4 74 01 ff 7f d5 25 02 01 06 16 ff b1 bf 00 82 5a 01 00 4c 33 88 55 76 3f 02 00 00 0a ce f8 bd 5d 03 08 48 42'),
@@ -113,9 +118,10 @@ if __name__=='__main__':
         #print(BlAdvDecoder.decode(i))
         if len(i)==43:
             d=BlAdvCoder.decode2(i)
+            
             #publish
         if len(i)==44:
-            d=BlAdvCoder.aesdecode(i[13:])
+            d=BlAdvCoder.aesdecode(b'0'*12+i)
             #config
         print(d)
     #print(BlAdvDecoder.decode(bytes.fromhex('')))

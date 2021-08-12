@@ -52,6 +52,58 @@ def logi(s):
     print(s)
 
 
+    class BlAdvCoder:
+        
+        @staticmethod
+        def commandledencoder(mac,r,g,b,t,p,o):
+            ## используется для управления светодиодом бикона
+            ## формирует строку для отправки в блютус модуль.
+            ## входные параметры мак адрес '010203040506', яркость цветов r,g,b, длительность в секундах, период в милисекундах, время включения в милисекундах
+            try:
+                enc_data= struct.pack('>5s6s3B3h',b'\xab\xba\x0f\00\04',bytes.fromhex(mac),r,g,b,t,p,o)
+            except:
+                return None
+            crc=zlib.crc32(enc_data)&0xffff
+            #print(crc32.to_bytes().hex(' '))
+            return struct.pack('>20sH',enc_data,crc)
+        
+              
+        @staticmethod
+        def decode2(dpin):
+            #dpo={'macgate':config['macgate']}
+            
+            dp1=dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
+            if len(dpin)==43: # from beacons
+                dp2=dict(zip(['mfg','uuid','cnt','ext','exd','txpower'],       struct.unpack('6s16sHBBb', dpin[16:])))
+                dp3=dict(zip(['mfg','cnt','type','uuid','ext','exd','txpower'],struct.unpack('5sH2s8sBib',dpin[16:41])))
+                if dp2['mfg'].hex()=='1aff4c000215': #apple beacon
+                    dpo={**dp1,**dp2}
+                if dp3['mfg'].hex()=='16ffb1bf00': #hitech beacon
+                    dpo={**dp1,**dp3}
+                for c in dpo:
+                    if c in ['mac','mfg','uuid']:
+                        dpo[c]=dpo[c].hex()
+                dpo['gate']=config['macgate']
+                dpo['raw']=dpin.hex()
+                return dpo
+                 
+    
+        @staticmethod   
+        def aesdecode(dpin):
+            key= b'fkytbwpt69xsbna3'
+            salt=b'lrjk;rdfkdldkhcngfle45'
+            dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dpin[13]-7),dpin)        
+    #        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
+            if mfg.hex()=='ffb1bf':
+                nonce=hashlib.sha1(once+salt)
+                rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
+                crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
+                crcc=zlib.crc32(data)&0xffff
+                if crc==crcc:
+                    return (cfg,data)
+                else:
+                    return (0,'')
+
 class makemesage:
     def __init__(self):
         self.key= b'fkytbwpt69xsbna3'
@@ -178,7 +230,8 @@ class SerialBgate(threading.Thread):
                                 for d in self.datapack:
                                     print("%02x "%d,end='')
                                 print(' ')
-                                decode(self.datapack[13:])
+                                BlAdvCoder.aesdecode(self.datapack)
+                                #decode(self.datapack[13:])
 #                   
 #                            print("part for crc",end=': ')
 #                            dp=self.datapack[20:37]

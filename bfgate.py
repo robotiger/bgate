@@ -277,57 +277,7 @@ class SerialBgate(threading.Thread):
         if(not self.queue.empty()):
             print(txt,self.queue.get())
 
-    def DecodeB(self,dpin):
-        dpo={}
-        if len(dpin)==13:
-            dpo["gate"]=config["macgate"]
-            dpo["mac"]=dpin[2:8].hex()
-            dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
-            dpo["band"]=dpin[12] 
-            dpo["raw"]=dpin.hex()
-            dpo["mfg"]=5
-            dpo["uuid"]='00000000'+dpin[3:5].hex() +'40008000'+ dpin[5:11].hex()
-            dpo["cnt"]=0
-            dpo["ext"]=0
-            dpo["exd"]=0
-            dpo["txpower"]=-8
-            
-            
-        if len(dpin)==43: #наши пакеты 43
-            dpo["gate"]=config["macgate"]
-            dpo["mac"]=dpin[2:8].hex()
-            dpo["rssi"]=dpin[11] if dpin[11] < 127 else dpin[11]-256            
-            dpo["band"]=dpin[12] if dpin[12] < 127 else dpin[22]-256            
-            dpo["raw"]=dpin.hex()
-            mfg=dpin[16:20].hex()
-            #print(mfg)
-            if mfg=='1aff4c00': #apple beacon ble4
-                if dpin[15:17].hex=='0215': #                
-                    dpo["mfg"]=1
-                    dpo["uuid"]=dpin[22:38].hex()
-                    dpo["cnt"]=dpin[38]*256+dpin[39]
-                    dpo["ext"]=dpin[40]
-                    dpo["exd"]=dpin[41]
-                    dpo["txpower"]=dpin[42] if dpin[42] < 127 else dpin[42]-256
-            if mfg=='16ffb1bf': #andrew beacon ble5
-                dpo["mfg"]=2
-                #dpo["uuid"]='00000000'+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
-                dpo["uuid"]=dpin[4:8].hex()+dpin[23:25].hex() +'40008000'+ dpin[25:31].hex()
-                dpo["cnt"]=dpin[21]*256+dpin[22]
-                dpo["ext"]=dpin[31]
-                dpo["exd"]=int(dpin[32:36].hex(),16)
-                dpo["txpower"]=dpin[36] if dpin[36] < 127 else dpin[36]-256
-        return dpo            
 
-    def CommandLED(self,mac,r,g,b,t,p,o):
-        ## send c
-        ##
-        try:
-            enc_data= struct.pack('>5s6s3B3h',b'\xab\xba\x0f\00\04',bytes.fromhex(mac),r,g,b,t,p,o)
-        except:
-            return None
-        crc32=zlib.crc32(enc_data)
-        self.ser.write(struct.pack('>20sH',enc_data,crc32&0xffff))
 
     def SerialDaemon(self):
        

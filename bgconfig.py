@@ -2,11 +2,15 @@ import os
 import shutil
 import shelve
 import uuid
+import base64
+import nmcli
+import threading
 
 class Configuration():
     def __init__(self):
         
         configfilename ="/home/bfg/bgate/config"
+        nmcli.disable_use_sudo()    
         self.on=False
         try:
             self.config=shelve.open(configfilename) 
@@ -29,24 +33,12 @@ class Configuration():
             # ситуация почти невероятная, нужен человек
             self.config={}
         self.configloaded=True
-        
-        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
-        self.mapto={
-            1:'macgate',
-            2:'uuidgate',
-            3:'wifissid',
-            4:'wifipassword',
-            5:'hotspotssid',
-            6:'hotspotpassword',
-            7:'brokerip',
-            8:'brokerport',
-            9:'brokertopic',
-           10:'tokenapi'
-            }
+        self.funclist()        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
+
 #        self.tomap={}
 #        for name in self.mapto:
 #            self.tomap[self.mapto[name]]=name
-            
+        
         if  self.read("macgate") is None:
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
@@ -59,18 +51,22 @@ class Configuration():
     def read(self, parameter):
         try:
             idx=int(parameter)
-            parameter=self.mapto[idx]
+            parameter=self.func[idx]
+            if isinstance(parameter,str):
+                return self.config.get(parameter,None)
         except:
             pass
-        return self.config.get(parameter,None)
+        return None
+        
 
     def write(self, parameter, value):
         try:
             idx=int(parameter)
-            parameter=self.mapto[idx]
+            parameter=self.func[idx]
         except:
             pass
-        self.config[parameter]=value
+        if isinstance(parameter,str):
+            self.config[parameter]=value
         try:
             self.config.sync()
         except:
@@ -85,8 +81,103 @@ class Configuration():
     
     def close(self):
         self.config.close()
+
+    def f_nmcli_connect_to_wifi(self,cfg,data):
+        ssid=self.read(cfg+1)
+        pas=self.read(cfg+2)
+        if not ssid is None and not pas is None:
+            connected=None
+            for d in nmcli.device.wifi():
+                if d.in_use:
+                    connected=d.ssid
+            if connected!=ssid:
+                print(f"disconnect {connected} connect to {ssid} {pas}")
+                #nmcli.connection.down(connected) #сначала отключиться
+                #nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+
+    def f_nmcli_hotspot_wifi(self,cfg,key):
+        #key=self.read(cfg+1)
+        #if key==None:
+        #    key='bgate'
+        mac=self.read('macgate')
+        factory=self.read('factory')
+        ssid=b'bgate'+base64.b64encode(mac+factory)
+        pas=base64.b64encode(hashlib.sha1(mac+key).digest()[:12])
+        if not ssid is None and not pas is None:
+            try:
+                nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
+            except:
+                pass
+    
+    def f_nmcli_disconnect(self,cfg,data):
+        for d in nmcli.device.wifi():
+            if d.in_use:
+                try:
+                    nmcli.connection.down(connected) # отключиться если подключен
+                except:
+                    pass
+                
+    def f_nmcli_deleteconnection(self,cfg,data):
+        try:
+            nmcli.connection.delete(data)
+        except:
+            pass
+
+    def f_nmcli_downconnection(self,cfg,data):
+        try:
+            nmcli.connection.down(data)
+        except:
+            pass
+        
+    def f_mqtt_connect(self,cfg,data):
+        pass
+
+    def funclist(self):
+        self.func={
+            
+            1:'macgate',
+            2:'uuidgate',
+            3:'factory',
+            100:self.f_nmcli_connect_to_wifi,
+            101:'wifissid',
+            102:'wifipassword',
+            110:self.f_nmcli_disconnect,
+            120:self.f_nmcli_deleteconnection,
+            120:self.f_nmcli_downconnection,
+            200:self.f_nmcli_hotspot_wifi,
+            201:'hotspotssid',
+            202:'hotspotpassword',
+            300:self.f_mqtt_connect,
+            301:'brokerip',
+            302:'brokerport',
+            303:'brokertopic',
+            304:'tokenapi'            
+            }
+    
+
+    def configurate(self,confdata):
+        cfg=confdata[0]
+        data=confdata[1]
+        if cfg in self.func:
+            #есть такой пункт в конфигурации
+            if isinstance(self.func[cfg],str):
+                #это параметр. добавить ридонли для некоторых. пока так: cfg меньше 100 заводские настройки
+                if cfg>100:
+                    self.write(cfg,data)
+            else:
+                #это действие. запустим в отдельном потоке
+                threading.Thread(target=self.func[cfg],args=(cfg,data)).start()
+        
+        
+        
+    
     
     
 if __name__=='__main__':
     config=Configuration()
+    config.print()
+    
+    config.configurate((101,"Xiaomi"))
+    config.configurate((102,"Xiaomi2"))
+    config.configurate((100,"Xiaomi3"))
     config.print()
