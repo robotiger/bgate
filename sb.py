@@ -12,7 +12,7 @@ import uuid
 import zlib
 import hashlib
 from Crypto.Cipher import AES
-from struct import *
+import struct
 #import blescan
 #import bluetooth._bluetooth as bluez
 
@@ -226,10 +226,11 @@ class SerialBgate(threading.Thread):
                             if True:
                                 print(self.datapack[0:6].hex())
                                 print(self.port,end=': ')
-                                print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-                                for d in self.datapack:
-                                    print("%02x "%d,end='')
-                                print(' ')
+                                #print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
+                                #for d in self.datapack:
+                                #    print("%02x "%d,end='')
+                                #print(' ')
+                                print(self.datapack.hex(' '))
                                 BlAdvCoder.aesdecode(self.datapack)
                                 #decode(self.datapack[13:])
 #                   
