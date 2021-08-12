@@ -92,9 +92,11 @@ class BlAdvCoder:
     def aesdecode(dpin):
         key= b'fkytbwpt69xsbna3'
         salt=b'lrjk;rdfkdldkhcngfle45'
-        dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dpin[13]-7),dpin)        
+        dlina=dpin[13]
+        mfg=dpin[14:17]
 #        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
         if mfg.hex()=='ffb1bf':
+            dlina,mfg,once,coded=struct.unpack('13xb3s4s%ds'%(dlina),dpin)        
             nonce=hashlib.sha1(once+salt)
             rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
             crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
@@ -241,67 +243,7 @@ class SerialBgate(threading.Thread):
                                     print(d)                                
                                 #BlAdvCoder.aesdecode(self.datapack)
                                 #decode(self.datapack[13:])
-#                   
-#                            print("part for crc",end=': ')
-#                            dp=self.datapack[20:37]
-#                            for d in dp:
-#                                print("%02x "%d,end='')
-#                            print(' ')
-  
-#                            print("%x %x %X"%(self.datapack[37],self.datapack[38], zlib.crc32(dp)))
 
-
-#                            print(self.port,end=': ')
-#                            print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-#                            for d in self.datapack:
-#                                print("%02x "%d,end='')
-#                            print(' ')
-
-#                            if self.datapack[0:6] in bfiltermac :
-#                            logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
-#                            self.port,
-#                            int(self.datapack[2]),
-#                            int(self.datapack[3]),
-#                            int(self.datapack[4]),
-#                            int(self.datapack[5]),
-#                            int(self.datapack[6]),
-#                            int(self.datapack[7]), #mac#
-
-#                            int(self.datapack[19]), #manid
-#                            int(self.datapack[18]), #manid2
-
-#                            int(self.datapack[23]), #dev type
-#                            int(self.datapack[24]), #dev subtype
-#                            int(self.datapack[25]), #id
-#                            int(self.datapack[26]), #id
-#                            int(self.datapack[27]), #id
-#                            int(self.datapack[28]), #id
-#                            int(self.datapack[29]), #id
-#                            int(self.datapack[30]), #id
-
-#                            int(self.datapack[21])*256+int(self.datapack[22]),
-
-#                            int(self.datapack[36]), #txpower
-#                            int(self.datapack[11])-256, #rssi
-#                            int(self.datapack[12]), #channel
-
-
-                                                    
-#                            int(self.datapack[6])*256+int(self.datapack[7]),
-#                            int(self.datapack[8]),
-#                            int(self.datapack[9]),
-#                            int(self.datapack[10]),# if int(self.datapack[10]>127,
-#                            int(self.datapack[11])-256,
-#                            int(self.datapack[12]),
-
-#                            ))
-#                                self.queue.put("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
-                        
-#                        print("%s%d"%(" "*((self.datapack[12]-37)*7),self.datapack[11]-256,))
-                                
-#                        for oneb in self.datapack:
-#                            print('%x'%(oneb,),end=' ')
-#                        print('')
             
 
 
