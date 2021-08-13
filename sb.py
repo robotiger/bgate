@@ -156,7 +156,7 @@ class SerialBgate(threading.Thread):
     def paddbyte(self,serstr):
         
         for s in serstr:
-            print(self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
+            print(s,self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
 
             if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
                 self.pack+=bytes([s])
