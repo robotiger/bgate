@@ -118,6 +118,7 @@ class SerialBgate(threading.Thread):
         self.pack=b''
         self.queue = queue.Queue() 
         self.cnt = 0
+        self.length=0
 
     def run(self): 
         print("run")
@@ -158,10 +159,11 @@ class SerialBgate(threading.Thread):
             if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
                 self.pack+=bytes([s])
             else:
+                print(self.pack.hex(' '))
                 crc1 = struct.unpack('H',self.pack[-2:])
                 crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
                 if crc1==crc2:
-                    print(self.pack.hex(' '))
+                    print('data',self.pack[5:-2].hex(' '))
                 self.pack=b''
                
 
