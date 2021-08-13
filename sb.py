@@ -161,7 +161,7 @@ class SerialBgate(threading.Thread):
             if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
                 self.pack+=bytes([s])
             else:
-                if len(self.pack>20):
+                if len(self.pack)>20:
                     print(self.pack.hex(' '))
                     crc1 = struct.unpack('H',self.pack[-2:])
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
