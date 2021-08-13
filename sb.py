@@ -150,15 +150,15 @@ class SerialBgate(threading.Thread):
             return False
 
     def f_ta(self,s):
-        return len(self.pack)<self.length+7
+        return len(self.pack)<self.length+7 and len(self.pack)>2
         
             
     def paddbyte(self,serstr):
         
         for s in serstr:
-            print(s,self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
+            print(s,bytes([s]).hex(),self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
 
-            if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
+            if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s])
             else:
                 if len(self.pack)>20:
