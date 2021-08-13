@@ -152,7 +152,7 @@ class SerialBgate(threading.Thread):
         return len(self.pack)<self.length+7
         
             
-    def paddbyte(serstr):
+    def paddbyte(self,serstr):
         
         for s in serstr:
             if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
