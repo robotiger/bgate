@@ -305,7 +305,7 @@ class SerialBgate(threading.Thread):
                         self.cnt=5
                         self.datapack=b''
                     elif self.cnt==5:
- #                       print(self.length,self.leng)
+#                       print(self.length,self.leng)
                         if self.length>0:
 #                            print("add")
                             self.datapack+=sib
@@ -320,15 +320,7 @@ class SerialBgate(threading.Thread):
                         self.cnt=0
 
 
-                        #print(self.port,end=': ')
-#                        print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-#                        for d in self.datapack:
-#                            print("%02x "%d,end='')
-#                        print(' ')
 
-
-
-#                        if len(self.datapack)==43:
                         if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
 
                             dp=self.DecodeB(self.datapack)
@@ -351,40 +343,7 @@ class SerialBgate(threading.Thread):
     
 
 
-class wifistate(threading.Thread):
 
-
-    def __init__(self):
-        print("__init__")
-        threading.Thread.__init__(self)  
-        nmcli.disable_use_sudo()
-        
-    def wifitest(self):            
-        for d in nmcli.device.wifi():
-            if d.in_use:
-                wifid=d.to_json()
-                #self.mqtt
-                #print(d)
-                #nmcli.connection.down(d.ssid)        
-        
-
-    #def wifitest(self):
-        #while(self.runing):
-            #try:
-                #resp=os.popen("nmcli device wifi list")        
-                #res=resp.readlines()
-                #for red in res:
-                    #col = red.split()
-                    #if col[0]=='*':
-                        ##print(col[6])
-                        #dpo["gate"]=config["macgate"]
-                        #wifid={"ssid":col[1],"chan":col[3],"signal":col[6],"gate":config["macgate"]}
-                        #self.mqttclient.publish("WIFI",msgpack.packb(wifid,use_bin_type=True))
-                
-
-            #except:
-                #print('wifi is not connected') 
-            #time.sleep(30)
         
     def run(self): 
         print("run")
@@ -400,24 +359,7 @@ class wifistate(threading.Thread):
 
 if __name__ == '__main__':
     ls={}
-    #config=shelve.open("/home/bfg/bgate/config")
-    
-    #try:
-        #resp=os.popen("nmap --open -p 5432 %s.%s.%s.0/24"%
-                      #tuple(get_ip_address('wlan0').split('.')[0:3])
-                      ##tuple(get_ip_address('wlp7s0').split('.')[0:3])
-                     #)
-        #res=resp.readlines()
-        #for d in res:
-            ##print(d[0:20])
-            #if d[0:20]=='Nmap scan report for':
-                #if '(' in d:
-                    #config["database"]=d[d.find('(')+1:d.find(')')]
-                #else:    
-                    #config["database"]=d[21:-1]
-    #except:
-        #print('wifi is not connected')
-    
+
     
     gpled=gpledthread.gpled('r1 s1 r0 s1') 
     gpled.start()

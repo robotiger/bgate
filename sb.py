@@ -106,55 +106,6 @@ class BlAdvCoder:
             else:
                 return (0,'')
 
-#class makemesage:
-    #def __init__(self):
-        #self.key= b'fkytbwpt69xsbna3'
-        ##           0123456789012345
-        #self.salt=b'lrjk;rdfkdldkhcngfle45'
-    #def message(self,cfg,data):
-        #once=AES.new(self.key,AES.MODE_EAX).nonce
-        #self.ronce=once[:4]
-        #print(self.ronce.hex())
-        #self.nonce=hashlib.sha1(self.ronce+self.salt)
-        #print(self.nonce.hexdigest())
-        #if len(data)>19:
-            #return None
-        #mes=pack('2sh%ds'%len(data),once[:2],cfg,data)
-        #coded,tag = AES.new(self.key,AES.MODE_EAX,nonce=self.nonce.digest()).encrypt_and_digest(mes) 
-        #lc=len(coded)
-        #lr=len(self.ronce)
-        #print(coded.hex())
-        #return pack('5B4s23s', lc+4+lr,lc+3+lr,0xff,0xb1,0xbf,self.ronce,coded+b'\x00'*(24-lc))
-
-    #def decode(self,mes):
-##16 ff b1 bf c3 79 4a 0e 04 fb e1 e4 03 59 40 db 75 1b dc 28 db b3 75 
-##00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
-##len        !nonce      ! mes
-                        ## once! cfg ! data
-        #dlina=mes[0]
-        #ffmfg=mes[1:4]
-        #once=mes[4:8]
-        #coded=mes[8:dlina+1]
-        #print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-        #if ffmfg.hex()=='ffb1bf':
-            #nonce=hashlib.sha1(once+self.salt)
-            #rcv =AES.new(self.key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
-            #ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
-            #print(ronce==once[:2],cfg,data)
-
-#def decode(mes):
-    #key= b'fkytbwpt69xsbna3'
-    #salt=b'lrjk;rdfkdldkhcngfle45'
-    #dlina=mes[0]
-    #ffmfg=mes[1:4]
-    #once=mes[4:8]
-    #coded=mes[8:dlina+1]
-    #print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-    #if ffmfg.hex()=='ffb1bf':
-        #nonce=hashlib.sha1(once+salt)
-        #rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
-        #ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
-        #print(ronce==once[:2],cfg,data)
 
 
 class SerialBgate(threading.Thread):
@@ -164,7 +115,7 @@ class SerialBgate(threading.Thread):
         print("__init__")
         threading.Thread.__init__(self)  
         self.port=port
-
+        self.pack=b''
         self.queue = queue.Queue() 
         self.cnt = 0
 
@@ -182,81 +133,107 @@ class SerialBgate(threading.Thread):
         if(not self.queue.empty()):
             print(txt,self.queue.get())
 
+
+            
+    def f_ab(self,s):
+        return len(self.pack)==0 and s==0xab
+
+    def f_ba(self,s):
+        return len(self.pack)==1 and s==0xba
+    
+    def f_dl(self,s):
+        if len(self.pack)==2:
+            self.length=s
+            return True
+        else:
+            return False
+
+    def f_ta(self,s):
+        return len(self.pack)<self.length+7
+        
+            
+    def paddbyte(serstr):
+        
+        for s in serstr:
+            if self.f_ab(s) and self.f_ba(s) and self.f_dl(s) and self.f_ta(s):
+                self.pack+=bytes([s])
+            else:
+                crc1 = struct.unpack('H',self.pack[-2:])
+                crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
+                if crc1==crc2:
+                    print(self.pack.hex(' '))
+                self.pack=b''
+               
+
     def SerialDaemon(self):
        
         with serial.Serial(self.port, 115200, timeout=1) as ser:  
             while(self.runing):
-                sib=ser.read()
-                if len(sib)>0:
-                    ib=sib[0]
-#                    print(sib,ib) #f
-                    if self.cnt==0:
-                        if ib==0xab:
-                            self.cnt=1
-                    elif self.cnt==1:
-                        if ib==0xba:
-                            self.cnt=2
-                    elif self.cnt==2:
-                        self.leng=ib
-                        self.length=ib
-                        self.cnt=3
-                    elif self.cnt==3:
-                        self.idpack=ib*256
-                        self.cnt=4
-                    elif self.cnt==4:
-                        self.idpack+=ib
-                        self.cnt=5
-                        self.datapack=b''
-                    elif self.cnt==5:
- #                       print(self.length,self.leng)
-                        if self.length>0:
-#                            print("add")
-                            self.datapack+=sib
-                            self.length-=1
-                        else:
-                            self.cnt=6
-                    if self.cnt==6:
-                        self.crc=ib*256
-                        self.cnt=7
-                    elif self.cnt==7:
-                        self.crc+=ib
-                        self.cnt=0
+                self.paddbyte(ser.read())
+                #sib=ser.read()
+                #if len(sib)>0:
+                    #ib=sib[0]
+##                    print(sib,ib) #f
+                    #if self.cnt==0:
+                        #if ib==0xab:
+                            #self.cnt=1
+                    #elif self.cnt==1:
+                        #if ib==0xba:
+                            #self.cnt=2
+                    #elif self.cnt==2:
+                        #self.leng=ib
+                        #self.length=ib
+                        #self.cnt=3
+                    #elif self.cnt==3:
+                        #self.idpack=ib*256
+                        #self.cnt=4
+                    #elif self.cnt==4:
+                        #self.idpack+=ib
+                        #self.cnt=5
+                        #self.datapack=b''
+                    #elif self.cnt==5:
+ ##                       print(self.length,self.leng)
+                        #if self.length>0:
+##                            print("add")
+                            #self.datapack+=sib
+                            #self.length-=1
+                        #else:
+                            #self.cnt=6
+                    #if self.cnt==6:
+                        #self.crc=ib*256
+                        #self.cnt=7
+                    #elif self.cnt==7:
+                        #self.crc+=ib
+                        #self.cnt=0
 
-#                        print(self.datapack[39:],b"\x03\x08HB")
-                        if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
-#                            if self.datapack[2:8] in bfiltermac :
-                            if True:
-                                print(self.datapack[0:6].hex())
-                                print(self.port,end=': ')
-                                #print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-                                #for d in self.datapack:
-                                #    print("%02x "%d,end='')
-                                #print(' ')
-                                print(self.datapack.hex(' '))
-                                if len(self.datapack)==43:
-                                    d=BlAdvCoder.decode2(self.datapack)
-                                    #publish
-                                    print(d)               
-                                else:
-                                #if len(self.datapack)==44:
-                                    d=BlAdvCoder.aesdecode(self.datapack)
-                                    #config
-                                    print(d)                                
-                                #BlAdvCoder.aesdecode(self.datapack)
-                                #decode(self.datapack[13:])
+##                        print(self.datapack[39:],b"\x03\x08HB")
+                        #if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
+##                            if self.datapack[2:8] in bfiltermac :
+                            #if True:
+                                #print(self.datapack[0:6].hex())
+                                #print(self.port,end=': ')
+                                ##print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
+                                ##for d in self.datapack:
+                                ##    print("%02x "%d,end='')
+                                ##print(' ')
+                                #print(self.datapack.hex(' '))
+                                #if len(self.datapack)==43:
+                                    #d=BlAdvCoder.decode2(self.datapack)
+                                    ##publish
+                                    #print(d)               
+                                #else:
+                                ##if len(self.datapack)==44:
+                                    #d=BlAdvCoder.aesdecode(self.datapack)
+                                    ##config
+                                    #print(d)                                
+                                ##BlAdvCoder.aesdecode(self.datapack)
+                                ##decode(self.datapack[13:])
 
             
 
 
         
     
-    
-    def readp(self):
-        if not self.queue.empty():
-            return self.queue.get()
-        else:
-            return None
-
 
 
 
