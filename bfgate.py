@@ -12,21 +12,18 @@ import logging
 import uuid
 import msgpack
 import paho.mqtt.client as mqtt 
-from flask import Flask, jsonify
-from flask import request
-from flask import send_from_directory, send_file, safe_join
-from flask import flash, redirect, url_for
-from werkzeug.utils import secure_filename
-from werkzeug.contrib.fixers import ProxyFix
+#from flask import Flask, jsonify
+#from flask import request
+#from flask import send_from_directory, send_file, safe_join
+#from flask import flash, redirect, url_for
+#from werkzeug.utils import secure_filename
+#from werkzeug.contrib.fixers import ProxyFix
 import json
 import requests
 import threading
 import shelve
 import hashlib
-import nmcli
-import time
-
-
+#import nmcli
 import socket,fcntl,struct
 import requests
 import ipaddress
@@ -48,14 +45,6 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-#import blescan
-#import bluetooth._bluetooth as bluez
-
-
-#from matplotlib.lines import Line2D
-#import matplotlib.pyplot as plt
-#import matplotlib.animation as animation
 
 
 """
@@ -135,59 +124,6 @@ def logi(s):
 
 
 gmqttclient=None
-
-
-
-
-class makemesage:
-    def __init__(self):
-        self.key= b'fkytbwpt69xsbna3'
-        #           0123456789012345
-        self.salt=b'lrjk;rdfkdldkhcngfle45'
-    def message(self,cfg,data):
-        once=AES.new(self.key,AES.MODE_EAX).nonce
-        self.ronce=once[:4]
-        print(self.ronce.hex())
-        self.nonce=hashlib.sha1(self.ronce+self.salt)
-        print(self.nonce.hexdigest())
-        if len(data)>19:
-            return None
-        mes=pack('2sh%ds'%len(data),once[:2],cfg,data)
-        coded,tag = AES.new(self.key,AES.MODE_EAX,nonce=self.nonce.digest()).encrypt_and_digest(mes) 
-        lc=len(coded)
-        lr=len(self.ronce)
-        print(coded.hex())
-        return pack('5B4s23s', lc+4+lr,lc+3+lr,0xff,0xb1,0xbf,self.ronce,coded+b'\x00'*(24-lc))
-
-    def decode(self,mes):
-#16 ff b1 bf c3 79 4a 0e 04 fb e1 e4 03 59 40 db 75 1b dc 28 db b3 75 
-#00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22
-#len        !nonce      ! mes
-                        # once! cfg ! data
-        dlina=mes[0]
-        ffmfg=mes[1:4]
-        once=mes[4:8]
-        coded=mes[8:dlina+1]
-        print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-        if ffmfg.hex()=='ffb1bf':
-            nonce=hashlib.sha1(once+self.salt)
-            rcv =AES.new(self.key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
-            ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
-            print(ronce==once[:2],cfg,data)
-
-def decode(mes):
-    key= b'fkytbwpt69xsbna3'
-    salt=b'lrjk;rdfkdldkhcngfle45'
-    dlina=mes[0]
-    ffmfg=mes[1:4]
-    once=mes[4:8]
-    coded=mes[8:dlina+1]
-    print(dlina,ffmfg.hex(),once.hex(),coded.hex())
-    if ffmfg.hex()=='ffb1bf':
-        nonce=hashlib.sha1(once+salt)
-        rcv =AES.new(key,AES.MODE_EAX,nonce=nonce.digest()).decrypt(coded)
-        ronce,cfg,data=unpack('2sh%ds'%(dlina-11),rcv)
-        print(ronce==once[:2],cfg,data)
 
 
 
@@ -320,8 +256,29 @@ class SerialBgate(threading.Thread):
                         self.cnt=0
 
 
-
+#                        print(self.datapack[39:],b"\x03\x08HB")
                         if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
+#                            if self.datapack[2:8] in bfiltermac :
+                            if True:
+                                print(self.datapack[0:6].hex())
+                                print(self.port,end=': ')
+                                #print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
+                                #for d in self.datapack:
+                                #    print("%02x "%d,end='')
+                                #print(' ')
+                                print(self.datapack.hex(' '))
+                                if len(self.datapack)==43:
+                                    d=BlAdvCoder.decode2(self.datapack)
+                                    #publish
+                                    print(d)               
+                                else:
+                                #if len(self.datapack)==44:
+                                    d=BlAdvCoder.aesdecode(self.datapack)
+                                    #config
+                                    print(d)      
+
+
+                        if len(self.datapack)>=13: 
 
                             dp=self.DecodeB(self.datapack)
 #                            print(dp)
@@ -394,36 +351,5 @@ if __name__ == '__main__':
 
 
 """
-нужно доустановить пакет dnsmasq-base
-
-список действующих подключений. если подключенний нет создадим хотспот
-nmcli conn show -a
-
-список устройств
-nmcli dev
-
-
-Подключаться к сети вайфай
-nmcli dev wifi connect Xiaomi1 password "12345pibfg"
-
-создать хотспот.   указывать ssid нужно уникальный. можно по маку или уиду
-nmcli dev wifi hotspot ifname wlx1cbfce465b17 ssid tea password "12345pibfg"
-nmcli dev wifi hotspot ssid tea password "12345pibfg"
-
-отключить hotspot, 
-nmcli con down Hotspot
-
-отключенный хоспот включить
-nmcli con up Hotspot
-
-
-удалить хотспотТекущее время 0
-nmcli conn del Hotspot
-
-Характеристики подключения пожалуй интересны мощность сигнала и канал
-nmcli dev wifi
-IN-USE  SSID     MODE            CHAN  RATE      SIGNAL  BARS  SECURITY 
-*       Xiaomi1  Инфраструктура  6     117 МБ/с  71      ▂▄▆_  WPA2     
-
-hcitool test
+для nmcli нужно доустановить пакет dnsmasq-base
 """

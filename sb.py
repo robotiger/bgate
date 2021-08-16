@@ -175,6 +175,7 @@ class SerialBgate(threading.Thread):
         with serial.Serial(self.port, 115200, timeout=1) as ser:  
             while(self.runing):
                 self.paddbyte(ser.read())
+                
                 #sib=ser.read()
                 #if len(sib)>0:
                     #ib=sib[0]
