@@ -215,81 +215,96 @@ class SerialBgate(threading.Thread):
 
 
 
+            
+    def f_ab(self,s):
+        return len(self.pack)==0 and s==0xab
+
+    def f_ba(self,s):
+        return len(self.pack)==1 and s==0xba
+    
+    def f_dl(self,s):
+        if len(self.pack)==2:
+            self.length=s
+            return True
+        else:
+            return False
+
+    def f_ta(self,s):
+        return len(self.pack)<self.length+7 and len(self.pack)>2
+        
+            
+    def paddbyte(self,serstr):
+        
+        for s in serstr:
+            #print(s,bytes([s]).hex(),self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
+
+            if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
+                self.pack+=bytes([s])
+            else:
+                if len(self.pack)>20:
+                    #print(self.pack.hex(' '))
+                    crc1 = struct.unpack('>H',self.pack[-2:])
+                    crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
+                    print(f"{crc1=} {crc2=}")
+                    if crc1==crc2:
+                        self.datapack=self.pack[5:-2]
+                        #print('data',self.pack[5:-2].hex(' '))
+                        if len(self.datapack)==43:
+                            d=BlAdvCoder.decode2(self.datapack)
+                            #publish
+                            print(d)               
+                        else:
+                        #if len(self.datapack)==44:
+                            d=BlAdvCoder.aesdecode(self.datapack)
+                            #config
+                            print(d)      
+                        
+                        
+                    self.pack=b''
+               
+
     def SerialDaemon(self):
        
-        with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
+        with serial.Serial(self.port, 115200, timeout=1) as ser:  
             while(self.runing):
-                sib=self.ser.read()
-                if len(sib)>0:
-                    ib=sib[0]
-#                    print(sib,ib)
-                    if self.cnt==0:
-                        if ib==0xab:
-                            self.cnt=1
-                    elif self.cnt==1:
-                        if ib==0xba:
-                            self.cnt=2
-                    elif self.cnt==2:
-                        self.leng=ib
-                        self.length=ib
-                        self.cnt=3
-                    elif self.cnt==3:
-                        self.idpack=ib*256
-                        self.cnt=4
-                    elif self.cnt==4:
-                        self.idpack+=ib
-                        self.cnt=5
-                        self.datapack=b''
-                    elif self.cnt==5:
-#                       print(self.length,self.leng)
-                        if self.length>0:
-#                            print("add")
-                            self.datapack+=sib
-                            self.length-=1
-                        else:
-                            self.cnt=6
-                    if self.cnt==6:
-                        self.crc=ib*256
-                        self.cnt=7
-                    elif self.cnt==7:
-                        self.crc+=ib
-                        self.cnt=0
+                self.paddbyte(ser.read())
 
 
-#                        print(self.datapack[39:],b"\x03\x08HB")
-                        if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
-#                            if self.datapack[2:8] in bfiltermac :
-                            if True:
-                                print(self.datapack[0:6].hex())
-                                print(self.port,end=': ')
-                                #print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-                                #for d in self.datapack:
-                                #    print("%02x "%d,end='')
-                                #print(' ')
-                                print(self.datapack.hex(' '))
-                                if len(self.datapack)==43:
-                                    d=BlAdvCoder.decode2(self.datapack)
-                                    #publish
-                                    print(d)               
-                                else:
-                                #if len(self.datapack)==44:
-                                    d=BlAdvCoder.aesdecode(self.datapack)
-                                    #config
-                                    print(d)      
+
+##                        print(self.datapack[39:],b"\x03\x08HB")
+                        #if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
+##                            if self.datapack[2:8] in bfiltermac :
+                            #if True:
+                                #print(self.datapack[0:6].hex())
+                                #print(self.port,end=': ')
+                                ##print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
+                                ##for d in self.datapack:
+                                ##    print("%02x "%d,end='')
+                                ##print(' ')
+                                #print(self.datapack.hex(' '))
+                                #if len(self.datapack)==43:
+                                    #d=BlAdvCoder.decode2(self.datapack)
+                                    ##publish
+                                    #print(d)               
+                                #else:
+                                ##if len(self.datapack)==44:
+                                    #d=BlAdvCoder.aesdecode(self.datapack)
+                                    ##config
+                                    #print(d)      
 
 
-                        if len(self.datapack)>=13: 
+                        #if len(self.datapack)>=13: 
 
-                            dp=self.DecodeB(self.datapack)
-#                            print(dp)
+                            #dp=self.DecodeB(self.datapack)
+##                            print(dp)
 
-                            if "mfg" in dp:
-                                #print(config["topic"],dp["gate"],dp["mfg"],dp["mac"],dp["rssi"],dp["band"],dp["txpower"],dp["cnt"],dp["uuid"])
-                                ret=self.Publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
-                                logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-#                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
+                            #if "mfg" in dp:
+                                ##print(config["topic"],dp["gate"],dp["mfg"],dp["mac"],dp["rssi"],dp["band"],dp["txpower"],dp["cnt"],dp["uuid"])
+                                #ret=self.Publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
+                                #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
+##                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
                                                     
-                                #logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
+                                ##logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
 
                                                     
             
@@ -302,16 +317,6 @@ class SerialBgate(threading.Thread):
 
 
         
-    def run(self): 
-        print("run")
-        self.runing=True
-        self.wifitest()
-        
-        
-    def stop(self):
-        print("stop")
-        self.runing=False        
-
 
 
 if __name__ == '__main__':
