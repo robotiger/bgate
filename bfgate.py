@@ -136,7 +136,7 @@ class bgmqtt(threading.Thread):
         global gmqttclient
         print("__init__")
         threading.Thread.__init__(self)  
-        self.port=port
+
         self.isconnected=False
         self.queue= queue.Queue()       
         self.cnt = 0
