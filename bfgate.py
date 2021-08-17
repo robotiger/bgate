@@ -162,10 +162,10 @@ class bgmqtt(threading.Thread):
             self.isconnected=False
             pass
         if not self.isconnected:
-            print("fall\ntry to connect ",config["broker"],config["brokerport"])
+            print(f"fall\ntry to connect {ip=} {port=}")
             try:
                 #self.mqttclient.loop_start()                 
-                self.mqttclient.connect(config["broker"],port=config["brokerport"])
+                self.mqttclient.connect(ip,port=port)
                 time.sleep(1)
                 self.isconnected=True
             except:
