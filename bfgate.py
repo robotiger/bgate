@@ -143,12 +143,12 @@ class bgmqtt(threading.Thread):
         self.mqttclient=mqtt.Client(config.read("macgate"))
         self.mqttclient.on_connect=self.on_connect
         self.mqttclient.on_disconnect=self.on_disconnect
-        
+        config.print()
         
     
         
     def connect(self):
-        ip,port = config.read("database"),config.read("brokerport")
+        ip,port = config.read("brokerip"),config.read("brokerport")
         print(f"try to connect {ip}:{port}")
         
         
