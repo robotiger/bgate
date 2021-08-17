@@ -303,7 +303,7 @@ class bgserial(threading.Thread):
        
         with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             while(self.running):
-                self.paddbyte(ser.read())
+                self.paddbyte(self.ser.read())
 
     def write(self,data):
         self.ser.write(data)
