@@ -165,6 +165,7 @@ class SerialBgate(threading.Thread):
                     print(self.pack.hex(' '))
                     crc1 = struct.unpack('H',self.pack[-2:])
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
+                    print(f"{crc1=} {crc2=}")
                     if crc1==crc2:
                         print('data',self.pack[5:-2].hex(' '))
                     self.pack=b''
