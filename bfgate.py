@@ -232,8 +232,7 @@ class bgserial(threading.Thread):
         threading.Thread.__init__(self)  
         self.port=port
         
-    def setque(q):
-        self.queue=q
+
         
     def f_ab(self,s):
         return len(self.pack)==0 and s==0xab
@@ -309,10 +308,9 @@ if __name__ == '__main__':
     config=bgconfig.Configuration()
     config.print()
   
-    
-    
-    bgmq=bgmqtt(q)
-    bgsr=bgserial(q)
+
+    bgmq=bgmqtt()
+    bgsr=bgserial("/dev/ttyS1")
     
     
     
