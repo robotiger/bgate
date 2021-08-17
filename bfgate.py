@@ -185,13 +185,19 @@ class bgmqtt(threading.Thread):
         
         
     def publoop(self):
-        while self.running and self.isconnected:
-            data = self.queue.get()
-            ret=self.mqttclient.publish(data['topic'],data['msg'])
-            if ret[0]!=0:
-                self.queue.put(data)
-                logi('cant sent message to %s'%(data))
-        return ret
+        while self.running:
+            while self.running and self.isconnected:
+                data = self.queue.get()
+                ret=self.mqttclient.publish(data['topic'],data['msg'])
+                if ret[0]!=0:
+                    self.queue.put(data)
+                    logi('cant sent message to %s'%(data))
+            self.disconnect()
+            time.sleep(0.5)
+            self.connect()
+            time.sleep(1)
+            
+
         
     def on_disconnect(self,client,userdata,rc):
         logi("disconnect mqtt %d"%rc)
