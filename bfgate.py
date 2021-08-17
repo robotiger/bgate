@@ -238,6 +238,7 @@ class bgserial(threading.Thread):
         print("__init__")
         threading.Thread.__init__(self)  
         self.port=port
+        self.pack=b''
         
     def run(self): 
         print("run serial")
