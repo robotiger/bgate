@@ -52,10 +52,10 @@ class Configuration():
         try:
             idx=int(parameter)
             parameter=self.func[idx]
-            if isinstance(parameter,str):
-                return self.config.get(parameter,None)
         except:
             pass
+        if isinstance(parameter,str):
+            return self.config.get(parameter,None)        
         return None
         
 
@@ -181,3 +181,11 @@ if __name__=='__main__':
     config.configurate((102,"Xiaomi2"))
     config.configurate((100,"Xiaomi3"))
     config.print()
+    
+    print('test config.read')
+    print(config.read("macgate"))
+    print(config.read("uuid"))
+    print(config.read("brokerip"))
+    print(config.read("brokerport"))
+    print(config.read("brokertopic"))
+        
