@@ -176,7 +176,7 @@ class bgmqtt(threading.Thread):
             #quit()
             
             
-    def disconnect():
+    def disconnect(self):
         self.mqttclient.disconnect()
                         
             
