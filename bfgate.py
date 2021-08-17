@@ -123,34 +123,38 @@ def logi(s):
 
 
 
-gmqttclient=None
 
 
 
 
 
-class SerialBgate(threading.Thread):
+
+class bgmqtt(threading.Thread):
 
 
-    def __init__(self,port):
+    def __init__(self):
         global gmqttclient
         print("__init__")
         threading.Thread.__init__(self)  
         self.port=port
         self.isconnected=False
-        self.queue = queue.Queue() 
+        self.queue= queue.Queue()       
         self.cnt = 0
         self.mqttclient=mqtt.Client(config.read("macgate"))
-        gmqttclient=self.mqttclient
         self.mqttclient.on_connect=self.on_connect
         self.mqttclient.on_disconnect=self.on_disconnect
-        self.Connect()
         
-    def Connect(self):
-        print("try to connect ",config["database"],config["brokerport"])
+        
+    
+        
+    def connect(self):
+        ip,port = config.read("database"),config.read("brokerport")
+        print(f"try to connect {ip}:{port}")
+        
+        
         try:
             
-            self.mqttclient.connect(config["database"],port=config["brokerport"])
+            self.mqttclient.connect(ip,port=port)
             time.sleep(1)
             #self.mqttclient.loop_start() 
             self.isconnected=True
@@ -169,26 +173,30 @@ class SerialBgate(threading.Thread):
                 pass 
         if not self.isconnected:
             print("fall - quit")
-            quit()
-            
-    def Publish(self,topic,msg):
-        ret=self.mqttclient.publish(topic,msg)
-        if ret[0]!=0:
-            #logi("cant sent mqtt %s %s"%(topic,ret))
             #quit()
             
-            self.mqttclient.disconnect()
-            time.sleep(1)
-            self.mqttclient.connect(config["broker"],port=config["brokerport"])
-            time.sleep(1)
-            ret=self.mqttclient.publish(topic,msg)
+            
+    def disconnect():
+        self.mqttclient.disconnect()
+                        
+            
+    def publish(self,data):
+        self.queue.put(data)
+        
+        
+    def publoop(self):
+        while self.running and self.isconnected:
+            data = self.queue.get()
+            ret=self.mqttclient.publish(data['topic'],data['msg'])
             if ret[0]!=0:
-                logi('cant sent message to %s'%(topic))
+                self.queue.put(data)
+                logi('cant sent message to %s'%(data))
         return ret
         
     def on_disconnect(self,client,userdata,rc):
         logi("disconnect mqtt %d"%rc)
-        quit()
+        self.isconnected=False
+        #quit()
     
     def on_connect(self,client,eserdata,flag,rc):
         global isconnected
@@ -201,21 +209,32 @@ class SerialBgate(threading.Thread):
 
     def run(self): 
         print("run")
-        self.runing=True
-        self.SerialDaemon()
+        self.running=True
+        #self.mqttclient.loop_forever()
+        self.mqttclient.loop_start()
+        self.publoop()
         
         
     def stop(self):
         print("stop")
-        self.runing=False        
+        self.running=False        
+        self.mqttclient.loop.stop()        
 
-    def Print(self,txt):
-        if(not self.queue.empty()):
-            print(txt,self.queue.get())
+    #def Print(self,txt):
+        #if(not self.queue.empty()):
+            #print(txt,self.queue.get())
 
 
+class bgserial(threading.Thread):
 
-            
+    def __init__(self,port):
+        print("__init__")
+        threading.Thread.__init__(self)  
+        self.port=port
+        
+    def setque(q):
+        self.queue=q
+        
     def f_ab(self,s):
         return len(self.pack)==0 and s==0xab
 
@@ -252,103 +271,71 @@ class SerialBgate(threading.Thread):
                         if len(self.datapack)==43:
                             d=BlAdvCoder.decode2(self.datapack)
                             #publish
+                            ret=bgmq.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
                             print(d)               
                         else:
                         #if len(self.datapack)==44:
-                            d=BlAdvCoder.aesdecode(self.datapack)
+                            dc=BlAdvCoder.aesdecode(self.datapack)
                             #config
-                            print(d)      
+                            print(dc)      
                         
+                            #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                         
                     self.pack=b''
                
 
-    def SerialDaemon(self):
+    def reader(self):
        
-        with serial.Serial(self.port, 115200, timeout=1) as ser:  
+        with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             while(self.runing):
                 self.paddbyte(ser.read())
 
+    def write(self,data):
+        self.ser.write(data)
 
 
-##                        print(self.datapack[39:],b"\x03\x08HB")
-                        #if len(self.datapack)>=13: # and self.datapack[39:]==b"\x03\x08HB":
-##                            if self.datapack[2:8] in bfiltermac :
-                            #if True:
-                                #print(self.datapack[0:6].hex())
-                                #print(self.port,end=': ')
-                                ##print("len %d lp %d id %d "%(len(self.datapack),self.leng,self.idpack),end='')
-                                ##for d in self.datapack:
-                                ##    print("%02x "%d,end='')
-                                ##print(' ')
-                                #print(self.datapack.hex(' '))
-                                #if len(self.datapack)==43:
-                                    #d=BlAdvCoder.decode2(self.datapack)
-                                    ##publish
-                                    #print(d)               
-                                #else:
-                                ##if len(self.datapack)==44:
-                                    #d=BlAdvCoder.aesdecode(self.datapack)
-                                    ##config
-                                    #print(d)      
-
-
-                        #if len(self.datapack)>=13: 
-
-                            #dp=self.DecodeB(self.datapack)
-##                            print(dp)
-
-                            #if "mfg" in dp:
-                                ##print(config["topic"],dp["gate"],dp["mfg"],dp["mac"],dp["rssi"],dp["band"],dp["txpower"],dp["cnt"],dp["uuid"])
-                                #ret=self.Publish(config["topic"],msgpack.packb(dp,use_bin_type=True))
-                                #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-##                                self.mqttclient.publish(config["topic"]+"/"+config["macgate"],msgpack.packb(dp,use_bin_type=True))
-                                                    
-                                ##logi('p:%s;mac:%02x%02x%02x%02x%02x%02x; %2x%2x id:%02x%02x%02x%02x%02x%02x%02x%02x n:%6d txpower:%3d; rssi:%d; ch:%d'%(
-
-                                                    
-            
-
-
-        
     
-    
-
-
-
-        
 
 
 if __name__ == '__main__':
-    ls={}
+    #ls={}
 
     
-    gpled=gpledthread.gpled('r1 s1 r0 s1') 
-    gpled.start()
-    gpled.setprog('g1 s1 g0 s1')
+    led=gpledthread.gpled('r1 s1 r0 s1') 
+    led.start()
+    led.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
-    config=configbgate.Configuration()
+    config=bgconfig.Configuration()
     config.print()
-    
-    #for c in config:
-    #    print(c,config[c])        
-    #argv=sys.argv
-    argv=["i","/dev/ttyS1"]
-    for  arg in range(1,len(argv)):
-        print("<",arg,">")
-        #ls[arg]=SerialBgate(argv[arg])
-        #ls[arg].start()
+  
     
     
-    #app.run(debug=True)
-    while True:
-        time.sleep(1)
-    #t=input("Enter to exit")
+    bgmq=bgmqtt(q)
+    bgsr=bgserial(q)
     
-    #for  b in ls:
-        #ls[b].stop()
-        #ls[b].join()
+    
+    
+    
+    
+    ##for c in config:
+    ##    print(c,config[c])        
+    ##argv=sys.argv
+    #argv=["i","/dev/ttyS1"]
+    #for  arg in range(1,len(argv)):
+        #print("<",arg,">")
+        ##ls[arg]=SerialBgate(argv[arg])
+        ##ls[arg].start()
+    
+    
+    ##app.run(debug=True)
+    #while True:
+        #time.sleep(1)
+    ##t=input("Enter to exit")
+    
+    ##for  b in ls:
+        ##ls[b].stop()
+        ##ls[b].join()
     
     
     
