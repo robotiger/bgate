@@ -144,6 +144,7 @@ class bgmqtt(threading.Thread):
         self.mqttclient.on_connect=self.on_connect
         self.mqttclient.on_disconnect=self.on_disconnect
         config.print()
+        print('brokerip',config.read('brokerip'))
         
     
         
