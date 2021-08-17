@@ -23,6 +23,7 @@ import requests
 import threading
 import shelve
 import hashlib
+import zlib
 #import nmcli
 import socket,fcntl,struct
 import requests
