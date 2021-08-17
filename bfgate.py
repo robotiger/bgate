@@ -307,10 +307,12 @@ if __name__ == '__main__':
     print("Print configuration")
     config=bgconfig.Configuration()
     config.print()
-  
 
-    bgmq=bgmqtt()
-    bgsr=bgserial("/dev/ttyS1")
+    mqt=bgmqtt()
+    mqt.start()
+    
+    bgs=bgserial("/dev/ttyS1")
+    bgs.start()
     
     
     
