@@ -28,7 +28,7 @@ import socket,fcntl,struct
 import requests
 import ipaddress
 #local modules
-import configbgate
+import bgconfig
 import gpledthread
 
 
