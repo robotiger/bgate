@@ -239,7 +239,16 @@ class bgserial(threading.Thread):
         threading.Thread.__init__(self)  
         self.port=port
         
-
+    def run(self): 
+        print("run serial")
+        self.running=True
+        self.reader()
+        
+        
+    def stop(self):
+        print("stop serial")
+        self.running=False        
+        
         
     def f_ab(self,s):
         return len(self.pack)==0 and s==0xab
