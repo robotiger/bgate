@@ -24,7 +24,7 @@ class BlAdvCoder:
     @staticmethod
     def decode2(dpin):
         #dpo={'macgate':config['macgate']}
-        
+        dpo={}
         dp1=dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
         if len(dpin)==43: # from beacons
             dp2=dict(zip(['mfg','uuid','cnt','ext','exd','txpower'],       struct.unpack('6s16sHBBb', dpin[16:])))
@@ -110,11 +110,13 @@ if __name__=='__main__':
         bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf f3 72 d7 07 3d a5 7b 77 0a 1e ae 3f f3 ae f2 b2 a0 f2 ff 63 6b 80 93 a4 ae f1 5a'),
         bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf c0 b6 66 44 c7 3c 4b 2e b0 bf 6b b6 76 86 80 8f f1 bf 40 c0 e2 88 fd dd b2 24 e3'),
         bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf c0 b6 66 44 c7 3c 4b 2e b0 bf 6b b6 76 86 80 8f f0 bf 40 c0 e2 88 fd dd b2 24 e3'),        
+        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f c5 26 1e ff b1 bf 1f 1d 5b 79 0a fe c1 d2 cc 2d ad 67 cd b3 69 6f 03 95 7e 72 80 f3 fe d0 06 42 24'),
         bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f d3 25 1e ff b1 bf f3 72 d7 07 3d a5 7b 77 0a 1e ae 3f f3 ae f2 b2 cc f2 ff 63 6b 80 93 a4 ae f1 5a'),
-        bytes.fromhex('00 03 be df b2 cf 7c a5 01 ff 7f be 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 bf b0 2e 70 dd b9 46 a0 cb 90 81 df 05 01 27 82 ec'),
         bytes.fromhex('00 03 c6 5a 9c f5 d4 74 01 ff 7f d5 25 02 01 06 16 ff b1 bf 00 82 5a 01 00 4c 33 88 55 76 3f 02 00 00 0a ce f8 bd 5d 03 08 48 42'),
+
+        bytes.fromhex('00 03 be df b2 cf 7c a5 01 ff 7f be 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 bf b0 2e 70 dd b9 46 a0 cb 90 81 df 05 01 27 82 ec'),
         bytes.fromhex('00 00 fe 0e 9b 4b fa c1 01 ff 7f cc 25 02 01 04 1a ff 4c 00 02 15 b9 40 7f 30 f5 f8 46 6e af f9 25 55 6b 57 fe 6d 04 d7 18 61 c3'),
-        bytes.fromhex('00 03 00 01 95 3f c8 c4 01 ff 7f c5 26 1e ff b1 bf 1f 1d 5b 79 0a fe c1 d2 cc 2d ad 67 cd b3 69 6f 03 95 7e 72 80 f3 fe d0 06 42 24')
+        bytes.fromhex('00 03 7a 2d 00 06 f1 92 01 ff 7f a3 25 02 01 1a 1a ff 4c 00 0c 0e 00 59 2d c9 1e 3c 45 dc f3 5a a7 54 1f 85 10 05 1b 18 b8 1c 63 ')
      ]
     
     for i in p:
