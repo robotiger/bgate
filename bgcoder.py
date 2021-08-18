@@ -102,6 +102,7 @@ HB ble5
 
 if __name__=='__main__':
     
+    import time 
     
     config={'macgate':'0123456987654'}
     
@@ -131,7 +132,14 @@ if __name__=='__main__':
             #config
         print(d)
     #print(BlAdvDecoder.decode(bytes.fromhex('')))
+    t1=time.time()
     
+    #for i in range(1000000):
+        #d=BlAdvCoder.decode2(p[6])
+    for i in range(1000):        
+        d=BlAdvCoder.aesdecode(p[4])
+    t2=time.time()
+    print(t2-t1)
     
     mac='c65a9cf5d474'
     mac='00'*6
