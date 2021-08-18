@@ -82,7 +82,7 @@ class bgled(Thread):
         
 def main():
     # Create an object of Thread
-    th = gpled('G s1 g s1')
+    th = bgled('G s1 g s1')
     # start the thread
     th.start()
     # print some logs in main thread
