@@ -287,13 +287,13 @@ class bgserial(threading.Thread):
                         self.datapack=self.pack[5:-2]
                         #print('data',self.pack[5:-2].hex(' '))
                         if len(self.datapack)==43:
-                            d=BlAdvCoder.decode2(self.datapack)
+                            d=bgcoder.BlAdvCoder.decode2(self.datapack)
                             #publish
                             ret=bgmq.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
                             print(d)               
                         else:
                         #if len(self.datapack)==44:
-                            dc=BlAdvCoder.aesdecode(self.datapack)
+                            dc=bgcoder.BlAdvCoder.aesdecode(self.datapack)
                             #config
                             print(dc)      
                         
