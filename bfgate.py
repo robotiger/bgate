@@ -319,7 +319,7 @@ if __name__ == '__main__':
     #ls={}
 
     
-    led=gpledthread.gpled('r1 s1 r0 s1') 
+    led=bgled.bgled('r1 s1 r0 s1') 
     led.start()
     led.setprog('g1 s1 g0 s1')
   
