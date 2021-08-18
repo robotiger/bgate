@@ -134,10 +134,11 @@ if __name__=='__main__':
     #print(BlAdvDecoder.decode(bytes.fromhex('')))
     t1=time.time()
     
-    #for i in range(1000000):
-        #d=BlAdvCoder.decode2(p[6])
-    for i in range(1000):        
-        d=BlAdvCoder.aesdecode(p[4])
+    for i in range(1000000):
+        d=BlAdvCoder.decode2(p[6])
+    #for i in range(1000):  
+        #print(i)
+        #d=BlAdvCoder.aesdecode(p[4])
     t2=time.time()
     print(t2-t1)
     
