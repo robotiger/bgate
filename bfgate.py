@@ -285,7 +285,7 @@ class bgserial(threading.Thread):
                     print(f"{crc1=} {crc2=}")
                     if crc1==crc2:
                         self.datapack=self.pack[5:-2]
-                        #print('data',self.pack[5:-2].hex(' '))
+                        print('data',self.pack[5:-2].hex(' '))
                         if len(self.datapack)==43:
                             d=bgcoder.BlAdvCoder.decode2(self.datapack)
                             #publish
