@@ -41,8 +41,7 @@ class bgled(Thread):
             for item in self.prog.split():
                 cmd=item[0]
                 if cmd in pin:
-                    pin[cmd][0](pin[cmd][1])
-                if cmd=='s':
+                    pin[cmd][0](pin[cmd][1])               
                     val=item[1:]
                     time.sleep(float(val))
 
@@ -82,17 +81,17 @@ class bgled(Thread):
         
 def main():
     # Create an object of Thread
-    th = bgled('G s1 g s1')
+    th = bgled('G1 g1 R1 r1 Y1 y1')
     # start the thread
     th.start()
     # print some logs in main thread
     for i in range(5):
         print('Hi from Main Function')
         time.sleep(10)
-        th.setprog('R s1 r s1')
+        th.setprog('R1 r1')
         print('Hi from Main Function')
         time.sleep(10)
-        th.setprog('Y s2 y s2')
+        th.setprog('Y2 y2')
     # wait for thread to finish
     th.setprog('')
     th.join()
