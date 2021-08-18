@@ -27,10 +27,11 @@ import zlib
 #import nmcli
 import socket,fcntl,struct
 import requests
-import ipaddress
+#import ipaddress
 #local modules
 import bgconfig
-import gpledthread
+import bgcoder
+import bgled
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
