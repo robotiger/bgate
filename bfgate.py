@@ -288,6 +288,7 @@ class bgserial(threading.Thread):
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
                         if len(self.datapack)==43:
                             d=bgcoder.BlAdvCoder.decode2(self.datapack)
+                            d['gate']=config.read('macgate')
                             #publish
                             ret=bgmq.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
                             print(d)               
