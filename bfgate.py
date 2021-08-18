@@ -279,7 +279,7 @@ class bgserial(threading.Thread):
             else:
                 if len(self.pack)>20:
                     #print(self.pack.hex(' '))
-                    crc1 = struct.unpack('>H',self.pack[-2:])
+                    crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
                     print(f"{crc1=} {crc2=}")
                     if crc1==crc2:
