@@ -319,9 +319,9 @@ if __name__ == '__main__':
     #ls={}
 
     
-    led=bgled.bgled('r1 s1 r0 s1') 
+    led=bgled.bgled('Y1 y1') 
     led.start()
-    led.setprog('g1 s1 g0 s1')
+    #led.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
     config=bgconfig.Configuration()
