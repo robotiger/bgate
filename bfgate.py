@@ -290,7 +290,7 @@ class bgserial(threading.Thread):
                             d=bgcoder.BlAdvCoder.decode2(self.datapack)
                             d['gate']=config.read('macgate')
                             #publish
-                            ret=bgmq.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
+                            ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
                             print(d)               
                         else:
                         #if len(self.datapack)==44:
