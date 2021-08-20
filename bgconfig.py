@@ -38,13 +38,14 @@ class Configuration():
 #        self.tomap={}
 #        for name in self.mapto:
 #            self.tomap[self.mapto[name]]=name
-        
+        self.write("factory","jyjytgvjxdjr")        
         if  self.read("macgate") is None:
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
             self.write("brokerip","192.168.31.20")
             self.write("brokerport",1883)
             self.write("brokertopic","BFGS5")
+            self.write("factory","jyjytgvjxdjr")
             
           
             
