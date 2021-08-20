@@ -118,7 +118,8 @@ if __name__=='__main__':
         bytes.fromhex('00 03 be df b2 cf 7c a5 01 ff 7f be 25 02 01 06 1a ff 4c 00 02 15 00 00 00 01 bf b0 2e 70 dd b9 46 a0 cb 90 81 df 05 01 27 82 ec'),
         bytes.fromhex('00 00 fe 0e 9b 4b fa c1 01 ff 7f cc 25 02 01 04 1a ff 4c 00 02 15 b9 40 7f 30 f5 f8 46 6e af f9 25 55 6b 57 fe 6d 04 d7 18 61 c3'),
         bytes.fromhex('00 03 7a 2d 00 06 f1 92 01 ff 7f a3 25 02 01 1a 1a ff 4c 00 0c 0e 00 59 2d c9 1e 3c 45 dc f3 5a a7 54 1f 85 10 05 1b 18 b8 1c 63 '),
-        bytes.fromhex('00 03 7a a7 37 b8 8f 69 01 ff 7f a1 26 02 01 1a 1a ff 4c 00 0c 0e 00 e6 0f a2 c8 62 1d 98 de 7a c4 65 b0 7d 10 05 1b 1c 7b 9d 38')
+        bytes.fromhex('00 03 7a a7 37 b8 8f 69 01 ff 7f a1 26 02 01 1a 1a ff 4c 00 0c 0e 00 e6 0f a2 c8 62 1d 98 de 7a c4 65 b0 7d 10 05 1b 1c 7b 9d 38'),
+        bytes.fromhex('00 03 a4 c1 38 ae 25 2a 01 ff 7f c4 26 02 01 06 11 16 95 fe 30 58 5b 05 01 2a 25 ae 38 c1 a4 28 01 00')
      ]
     
     for i in p:
@@ -127,18 +128,19 @@ if __name__=='__main__':
             d=BlAdvCoder.decode2(i)
             
             #publish
-        if len(i)==44:
+        else:
+        #if len(i)==44:
             d=BlAdvCoder.aesdecode(i)
             #config
         print(d)
     #print(BlAdvDecoder.decode(bytes.fromhex('')))
     t1=time.time()
     
-    for i in range(1000000):
-        d=BlAdvCoder.decode2(p[6])
-    #for i in range(1000):  
+    #for i in range(1000000):
+    #    d=BlAdvCoder.decode2(p[6])
+    for i in range(1000):  
         #print(i)
-        #d=BlAdvCoder.aesdecode(p[4])
+        d=BlAdvCoder.aesdecode(p[1])
     t2=time.time()
     print(t2-t1)
     

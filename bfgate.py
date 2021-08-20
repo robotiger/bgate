@@ -296,8 +296,10 @@ class bgserial(threading.Thread):
                         #if len(self.datapack)==44:
                             dc=bgcoder.BlAdvCoder.aesdecode(self.datapack)
                             #config
-                            print("Закодированая",dc)      
-                        
+                            if dc:
+                                print("Закодированая",dc)      
+                                config.configurate(dc)
+                                logi(f' cfg {dc[0]} data {dc[1]}')
                             #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                         
                     self.pack=b''
