@@ -5,6 +5,7 @@ import uuid
 import base64
 import nmcli
 import threading
+import hashlib
 
 class Configuration():
     def __init__(self):
@@ -38,7 +39,9 @@ class Configuration():
 #        self.tomap={}
 #        for name in self.mapto:
 #            self.tomap[self.mapto[name]]=name
-        self.write("factory","jyjytgvjxdjr")        
+        self.write("factory","003")        
+        self.write("macgate","%012x"%uuid.getnode())
+
         if  self.read("macgate") is None:
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
@@ -102,10 +105,11 @@ class Configuration():
         #    key='bgate'
         mac=self.read('macgate')
         factory=self.read('factory')
-        ssid=b'bgate'+base64.b64encode(mac+factory)
-        pas=base64.b64encode(hashlib.sha1(mac+key).digest()[:12])
+        ssid=b'BG'+base64.b64encode(bytes.fromhex(mac)+factory.encode()) 
+        pas=base64.b64encode(hashlib.sha1((mac+key).encode()).digest()[:12])
         if not ssid is None and not pas is None:
             try:
+                print(f"{ssid=} {pas=}")
                 nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
             except:
                 pass
@@ -178,6 +182,8 @@ if __name__=='__main__':
     config=Configuration()
     config.print()
     
+    config.configurate((200,"Xiaomi3"))
+
     config.configurate((101,"Xiaomi"))
     config.configurate((102,"Xiaomi2"))
     config.configurate((100,"Xiaomi3"))
