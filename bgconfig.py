@@ -96,8 +96,11 @@ class Configuration():
                     connected=d.ssid
             if connected!=ssid:
                 print(f"disconnect {connected} connect to {ssid} {pas}")
-                #nmcli.connection.down(connected) #сначала отключиться
-                #nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                nmcli.connection.down(connected) #сначала отключиться
+                nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                for c in nmcli.connection(): 
+                    print(c)                    
+
 
     def f_nmcli_hotspot_wifi(self,cfg,key):
         #key=self.read(cfg+1)
@@ -111,7 +114,16 @@ class Configuration():
         if not ssid is None and not pas is None:
             try:
                 print(f"{ssid=} {pas=}")
-                nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
+                connected=None
+                for d in nmcli.device.wifi():
+                    if d.in_use:
+                        connected=d.ssid
+                if connected!=ssid:
+                    nmcli.connection.down(connected) #сначала отключиться
+                    nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
+                    for c in nmcli.connection(): 
+                        print(c)                    
+                
             except:
                 pass
     
