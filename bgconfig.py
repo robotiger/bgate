@@ -105,8 +105,9 @@ class Configuration():
         #    key='bgate'
         mac=self.read('macgate')
         factory=self.read('factory')
+        print(mac,factory,cfg,key)
         ssid=b'BG'+base64.b64encode(bytes.fromhex(mac)+factory.encode()) 
-        pas=base64.b64encode(hashlib.sha1((mac+key).encode()).digest()[:12])
+        pas=base64.b64encode(hashlib.sha1((mac+str(key)).encode()).digest()[:12])
         if not ssid is None and not pas is None:
             try:
                 print(f"{ssid=} {pas=}")
