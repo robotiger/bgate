@@ -283,7 +283,7 @@ class bgserial(threading.Thread):
                     #print(self.pack.hex(' '))
                     crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
-                    print(f"{crc1=} {crc2=}")
+                    #print(f"{crc1=} {crc2=}")
                     if crc1==crc2:
                         self.datapack=self.pack[5:-2]
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
@@ -298,7 +298,7 @@ class bgserial(threading.Thread):
                             dc=bgcoder.BlAdvCoder.aesdecode(self.datapack)
                             #config
                             if dc:
-                                print("Закодированая",dc)      
+                                #print("Закодированая",dc)      
                                 config.configurate(dc)
                                 logi(f' cfg {dc[0]} data {dc[1]}')
                             #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
