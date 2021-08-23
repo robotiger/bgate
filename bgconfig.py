@@ -190,8 +190,9 @@ class Configuration():
             #есть такой пункт в конфигурации
             if isinstance(self.func[cfg],str):
                 #это параметр. добавить ридонли для некоторых. пока так: cfg меньше 100 заводские настройки
-                if cfg>100:
+                if cfg>=100:
                     self.write(cfg,data)
+                    print(f" write {cfg=} {data=}")
             else:
                 #это действие. запустим в отдельном потоке
                 threading.Thread(target=self.func[cfg],args=(cfg,data)).start()
