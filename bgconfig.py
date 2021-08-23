@@ -123,11 +123,16 @@ class Configuration():
                     for d in nmcli.device.wifi():
                         if d.in_use:
                             connected=d.ssid
-                    if connected!=ssid and connected:
+                    if connected: #!=ssid and connected:
                         nmcli.connection.down(connected) #сначала отключиться
+                    
+                    print(f"hotspot {ssid=} {pas=}")
+                    try:
                         nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
-                        for c in nmcli.connection(): 
-                            print(c)                    
+                    except:
+                        print('except')
+                    for c in nmcli.connection(): 
+                        print(c)                    
                     
                 except:
                     pass
