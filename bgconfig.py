@@ -170,7 +170,7 @@ class Configuration():
             102:'wifipassword',
             110:self.f_nmcli_disconnect,
             120:self.f_nmcli_deleteconnection,
-            120:self.f_nmcli_downconnection,
+            130:self.f_nmcli_downconnection,
             200:self.f_nmcli_hotspot_wifi,
             201:'hotspotssid',
             202:'hotspotpassword',
