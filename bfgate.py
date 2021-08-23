@@ -69,8 +69,11 @@ HB ble5
 -1 0  1  2  3   4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 
    type | mac             |bits |tx|rs|pr|flags   |le|us|idmfg|pid|cnt |dev  + id              |ty|exdata     |tp|crc  |ln|st|name
    const| id              |const   |var  |const   | const         |var | id                    |var              |crc  |const
+ 
                                                                cccccccccccccccccrrrrrrrrrrrrccccccccccccccccccccc    
 
+   00 03 fe 0e 9b 4b fa c1 01 ff 7f bf 25 0f 09 4d 53 42 65 61 63 6f 6e 43 6f 6e 66 69 67 03 19 00 00 02 01 05
+                                        !
    
 len 44  change to 43
 0:type:00 03

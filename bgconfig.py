@@ -90,6 +90,7 @@ class Configuration():
         ssid=self.read(cfg+1)
         pas=self.read(cfg+2)
         idcon=self.read(cfg+3)
+        print(f'{idcon=} {data=}')
         if idcon!=data: #это не тот запрос,что был в прошлый раз
             if not ssid is None and not pas is None:
                 connected=None
