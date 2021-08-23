@@ -142,13 +142,17 @@ class Configuration():
                 
     def f_nmcli_deleteconnection(self,cfg,data):
         try:
+            print(f'delete connection {data}')
             nmcli.connection.delete(data)
+            print('deleted')            
         except:
             pass
 
     def f_nmcli_downconnection(self,cfg,data):
         try:
+            print(f'down connection {data}')
             nmcli.connection.down(data)
+            print('down')
         except:
             pass
         
