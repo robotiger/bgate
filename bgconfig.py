@@ -108,29 +108,29 @@ class Configuration():
 
 
     def f_nmcli_hotspot_wifi(self,cfg,key):
-        #key=self.read(cfg+1)
-        #if key==None:
-        #    key='bgate'
-        mac=self.read('macgate')
-        factory=self.read('factory')
-        print(mac,factory,cfg,key)
-        ssid=b'BG'+base64.b64encode(bytes.fromhex(mac)+factory.encode()) 
-        pas=base64.b64encode(hashlib.sha1((mac+str(key)).encode()).digest()[:12])
-        if not ssid is None and not pas is None:
-            try:
-                print(f"{ssid=} {pas=}")
-                connected=None
-                for d in nmcli.device.wifi():
-                    if d.in_use:
-                        connected=d.ssid
-                if connected!=ssid and connected:
-                    nmcli.connection.down(connected) #сначала отключиться
-                    nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
-                    for c in nmcli.connection(): 
-                        print(c)                    
-                
-            except:
-                pass
+        skey=self.read(203)
+        if skey != key:            
+            self.write(203,key)
+            mac=self.read('macgate')
+            factory=self.read('factory')
+            print(mac,factory,cfg,key)
+            ssid=b'BG'+base64.b64encode(bytes.fromhex(mac)+factory.encode()) 
+            pas=base64.b64encode(hashlib.sha1((mac+str(key)).encode()).digest()[:12])
+            if not ssid is None and not pas is None:
+                try:
+                    print(f"hotspot {ssid=} {pas=}")
+                    connected=None
+                    for d in nmcli.device.wifi():
+                        if d.in_use:
+                            connected=d.ssid
+                    if connected!=ssid and connected:
+                        nmcli.connection.down(connected) #сначала отключиться
+                        nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
+                        for c in nmcli.connection(): 
+                            print(c)                    
+                    
+                except:
+                    pass
     
     def f_nmcli_disconnect(self,cfg,data):
         for d in nmcli.device.wifi():
@@ -174,6 +174,7 @@ class Configuration():
             200:self.f_nmcli_hotspot_wifi,
             201:'hotspotssid',
             202:'hotspotpassword',
+            203:'hotspotkey',
             300:self.f_mqtt_connect,
             301:'brokerip',
             302:'brokerport',
