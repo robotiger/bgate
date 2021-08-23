@@ -89,17 +89,22 @@ class Configuration():
     def f_nmcli_connect_to_wifi(self,cfg,data):
         ssid=self.read(cfg+1)
         pas=self.read(cfg+2)
-        if not ssid is None and not pas is None:
-            connected=None
-            for d in nmcli.device.wifi():
-                if d.in_use:
-                    connected=d.ssid
-            if connected!=ssid:
-                print(f"disconnect {connected} connect to {ssid} {pas}")
-                nmcli.connection.down(connected) #сначала отключиться
-                nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
-                for c in nmcli.connection(): 
-                    print(c)                    
+        idcon=self.read(cfg+3)
+        if idcon!=data: #это не тот запрос,что был в прошлый раз
+            if not ssid is None and not pas is None:
+                connected=None
+                for d in nmcli.device.wifi():
+                    if d.in_use:
+                        connected=d.ssid
+                if connected and connected!=ssid:
+                    print(f"disconnect {connected} connect to {ssid} {pas}")
+                    nmcli.connection.down(connected) #сначала отключиться
+                    nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                    self.write(cfg+3,data) 
+                    #сохраним id при следующем получении блютус команды с тем же ид 
+                    #nmcli вызываться не будет
+                    for c in nmcli.connection(): 
+                        print(c)                    
 
 
     def f_nmcli_hotspot_wifi(self,cfg,key):
@@ -118,7 +123,7 @@ class Configuration():
                 for d in nmcli.device.wifi():
                     if d.in_use:
                         connected=d.ssid
-                if connected!=ssid:
+                if connected!=ssid and connected:
                     nmcli.connection.down(connected) #сначала отключиться
                     nmcli.device.wifi_hotspot(con_name= 'Hotspot', ssid = ssid, password= pas)
                     for c in nmcli.connection(): 
