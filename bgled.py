@@ -44,40 +44,7 @@ class bgled(Thread):
                     pin[cmd][0](pin[cmd][1])               
                     val=item[1:]
                     time.sleep(float(val))
-
-                #if cmd=='r':
-                    #if val=='1':
-                        #g.setup(12,g.OUT)
-                        #g.output(12,0)
-                        #g.cleanup(12)
-                        #print("red on")
-                    #else:
-                        #g.setup(12,g.IN)
-                        #g.cleanup(12)
-                        #print("red off")
-                #if cmd=='g':
-                    #if val=='1':
-                        #g.setup(15,g.OUT)
-                        #g.output(15,0)
-                        #g.cleanup(15)
-                        #print("green on")
-                    #else:
-                        #g.setup(15,g.IN)
-                        #g.cleanup(15)
-                        #print("green off")
-                #if cmd=='y':
-                    #if val=='1':
-                        #g.setup(11,g.OUT)
-                        #g.output(11,0)
-                        #g.cleanup(11)
-                        #print("yellow on")
-                    #else:
-                        #g.setup(11,g.IN)
-                        #g.cleanup(11)
-                        #print("yellow off")                
-
- 
-                time.sleep(0.05)
+                time.sleep(0.1)
         
 def main():
     # Create an object of Thread
