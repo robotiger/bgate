@@ -303,6 +303,8 @@ class bgserial(threading.Thread):
                             if dc:
                                 #print("Закодированая",dc)      
                                 config.configurate(dc)
+                                if dc[0]==0x7ed:
+                                    led.setprog(dc[1].decode())
                                 logi(f' cfg {dc[0]} data {dc[1]}')
                             #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                         
