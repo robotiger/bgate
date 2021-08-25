@@ -15,18 +15,23 @@ def off(pin):
 
 # A class that extends the Thread class
 class bgled(Thread):
-    def __init__(self,newprog):
+    def __init__(self,stop_event):
         # Call the Thread class's init function
         Thread.__init__(self)
-        self.prog=newprog
+        self.stop_event=stop_event
+        self.prog=''
         g.setwarnings(False)
         g.setmode(g.BOARD)        
+        
+        
         
     def setprog(self,newprog):
         print("newprog",newprog)
         self.prog=newprog
 
+
     def run(self):
+        self.running=True
         print('start prog',self.prog)
         pin={
             'r':(off,12),
@@ -37,7 +42,7 @@ class bgled(Thread):
             'Y':(on,11)
             }
              
-        while len(self.prog)>0:
+        while len(self.prog)>0 and not self.stop_event.is_set():
             for item in self.prog.split():
                 cmd=item[0]
                 if cmd in pin:

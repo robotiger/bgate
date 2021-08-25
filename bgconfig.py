@@ -13,10 +13,11 @@ import bgled
 #нужен поток контролирующий соединения
 
 class Configuration():
-    def __init__(self):
-        self.led=bgled.bgled('Y1 y1') 
+    def __init__(self,stop_event):
+        self.led=bgled.bgled(stop_event)
         self.led.start()
-        
+        self.led.setprog('Y1 y1') # нужно чтобы выводилось состояние
+        self.stop_event=stop_event
         configfilename ="/home/bfg/bgate/config"
         nmcli.disable_use_sudo()    
         self.on=False

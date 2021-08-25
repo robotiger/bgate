@@ -137,11 +137,11 @@ def logi(s):
 class bgmqtt(threading.Thread):
 
 
-    def __init__(self):
-        global gmqttclient
+    def __init__(self,stop_event):
+        #global gmqttclient
         print("__init__")
         threading.Thread.__init__(self)  
-
+        self.stop_event = stop_event
         self.isconnected=False
         self.queue= queue.Queue()       
         self.cnt = 0
@@ -191,8 +191,13 @@ class bgmqtt(threading.Thread):
         
         
     def publoop(self):
-        while self.running:
-            while self.running and self.isconnected:
+        #while self.running:
+        
+        while not self.stop_event.wait(1):
+            self.connect()
+            time.sleep(1)            
+#            while self.running and self.isconnected:
+            while self.isconnected and not self.stop_event.is_set():
                 data = self.queue.get()
                 ret=self.mqttclient.publish(data['topic'],data['msg'])
                 if ret[0]!=0:
@@ -200,9 +205,8 @@ class bgmqtt(threading.Thread):
                     logi('cant sent message to %s'%(data))
             self.disconnect()
             time.sleep(0.5)
-            self.connect()
-            time.sleep(1)
             
+        self.mqttclient.loop.stop()   
 
         
     def on_disconnect(self,client,userdata,rc):
@@ -239,9 +243,10 @@ class bgmqtt(threading.Thread):
 
 class bgserial(threading.Thread):
 
-    def __init__(self,port):
+    def __init__(self,stop_event,port):
         print("__init__")
         threading.Thread.__init__(self)  
+        self.stop_event=stop_event
         self.port=port
         self.pack=b''
         self.length=1
@@ -255,6 +260,9 @@ class bgserial(threading.Thread):
     def stop(self):
         print("stop serial")
         self.running=False        
+        
+    def test(self):
+        return self.running
         
         
     def f_ab(self,s):
@@ -276,44 +284,39 @@ class bgserial(threading.Thread):
             
     def paddbyte(self,serstr):
         
-        for s in serstr:
-            #print(s,bytes([s]).hex(),self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
-
+        for s in serstr:                #print(s,bytes([s]).hex(),self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
-                self.pack+=bytes([s])
+                self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
-                if len(self.pack)>20:
+                if len(self.pack)>20: # пакет принят. проверим контрольную сумму 
                     #print(self.pack.hex(' '))
                     crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
                     #print(f"{crc1=} {crc2=}")
-                    if crc1==crc2:
+                    if crc1==crc2: # 
                         self.datapack=self.pack[5:-2]
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
-                        if len(self.datapack)==43:
-                            d=bgcoder.BlAdvCoder.decode2(self.datapack)
-                            d['gate']=config.read('macgate')
-                            #publish
-                            ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
-                            print(d)               
-                        else:
-                        #if len(self.datapack)==44:
-                            dc=bgcoder.BlAdvCoder.aesdecode(self.datapack)
-                            #config
-                            if dc:
-                                print("Закодированая",dc)      
-                                config.configurate(dc)
-
-                                logi(f' cfg {dc[0]} data {dc[1]}')
-                            #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-                        
+             
+                        dc=bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
+                        if dc: # удачно расшифровали используем для конфигурирования
+                            logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
+                            config.configurate(dc)
+                            print(f'закодирована {dc}')                                                        
+                        else: 
+                            if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
+                                d=bgcoder.BlAdvCoder.decode2(self.datapack)
+                                d['gate']=config.read('macgate')
+                                #publish
+                                ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
+                                print(d)  
                     self.pack=b''
                
 
     def reader(self):
        
         with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
-            while(self.running):
+            #while(self.running):
+            while(not self.stop_event.is_set()):
                 self.paddbyte(self.ser.read())
 
     def write(self,data):
@@ -325,19 +328,22 @@ class bgserial(threading.Thread):
 
 if __name__ == '__main__':
 
+    stop_event = threading.Event()
+
     print("Print configuration")
-    config=bgconfig.Configuration()
+    config=bgconfig.Configuration(stop_event)
     config.print()
 
-    mqt=bgmqtt()
+    mqt=bgmqtt(stop_event)
     mqt.start()
     
-    bgs=bgserial("/dev/ttyS1")
+    bgs=bgserial(stop_event,"/dev/ttyS1")
     bgs.start()
     
     while(True):
         print(threading.enumerate())
         time.sleep(10)
+        stop_event.set()
     
     
     
