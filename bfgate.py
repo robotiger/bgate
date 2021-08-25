@@ -294,6 +294,7 @@ if __name__ == '__main__':
     bgs=bgserial(stop_event,"/dev/ttyS1")
     bgs.start()
     
+    config.configurate((700,'G2 g1'))
     while(not stop_event.is_set()):
         print(threading.enumerate())
         time.sleep(5)
