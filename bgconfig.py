@@ -7,6 +7,9 @@ import nmcli
 import threading
 import hashlib
 
+import bgled
+
+
 class Configuration():
     def __init__(self):
         

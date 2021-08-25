@@ -301,10 +301,9 @@ class bgserial(threading.Thread):
                             dc=bgcoder.BlAdvCoder.aesdecode(self.datapack)
                             #config
                             if dc:
-                                #print("Закодированая",dc)      
+                                print("Закодированая",dc)      
                                 config.configurate(dc)
-                                if dc[0]==0x7ed:
-                                    led.setprog(dc[1].decode())
+
                                 logi(f' cfg {dc[0]} data {dc[1]}')
                             #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                         
@@ -328,8 +327,8 @@ if __name__ == '__main__':
     #ls={}
 
     
-    led=bgled.bgled('Y1 y1') 
-    led.start()
+    #led=bgled.bgled('Y1 y1') 
+    #led.start()
     #led.setprog('g1 s1 g0 s1')
   
     print("Print configuration")
