@@ -10,8 +10,12 @@ import hashlib
 import bgled
 
 
+#нужен поток контролирующий соединения
+
 class Configuration():
     def __init__(self):
+        self.led=bgled.bgled('Y1 y1') 
+        self.led.start()
         
         configfilename ="/home/bfg/bgate/config"
         nmcli.disable_use_sudo()    
@@ -170,6 +174,10 @@ class Configuration():
         res=os.popen(data.encode())
         res.close()
     
+    def f_ledprog(self,cfg,data):
+        self.led.setprog(data.decode())            
+
+    
     def f_mqtt_connect(self,cfg,data):
         pass
 
@@ -201,7 +209,8 @@ class Configuration():
             302:'brokerport',
             303:'brokertopic',
             304:'tokenapi',
-            500:self.f_ospopen
+            500:self.f_ospopen,
+            700:self.f_ledprog
             }
     
 
