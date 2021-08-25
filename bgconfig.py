@@ -176,6 +176,7 @@ class Configuration():
         res.close()
     
     def f_ledprog(self,cfg,data):
+        print(f'f_ledprog {cfg=} {data=}')
         self.led.setprog(data.decode())            
 
     def f_exit(self,cfg,data):

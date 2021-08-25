@@ -147,11 +147,11 @@ class bgmqtt(threading.Thread):
 #            while self.running and self.isconnected:
             while self.isconnected and not self.stop_event.is_set():
                 try:
-                    data = self.queue.get(timeout=1)
-                    print(f'qget {data}')
+                    data = self.queue.get(timeout=2)
+                    #print(f'qget {data}')
                 except:
                     data = None
-                    print('qeue get timeout')
+                    #print('qeue get timeout')
                 if not data is None:
                     ret=self.mqttclient.publish(data['topic'],data['msg'])
                     if ret[0]!=0:
