@@ -188,7 +188,7 @@ class bgmqtt(threading.Thread):
     def stop(self):
         print("stop")
         self.running=False        
-        self.mqttclient.loop.stop()        
+        self.mqttclient.loop_stop()        
 
     #def Print(self,txt):
         #if(not self.queue.empty()):
