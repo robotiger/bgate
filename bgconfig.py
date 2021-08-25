@@ -161,7 +161,12 @@ class Configuration():
             print('down')
         except:
             pass
+    
+    def f_ospopen(self,cfg,data):
         
+        res=os.popen(data.encode())
+        res.close()
+    
     def f_mqtt_connect(self,cfg,data):
         pass
 
@@ -174,9 +179,16 @@ class Configuration():
             100:self.f_nmcli_connect_to_wifi,
             101:'wifissid',
             102:'wifipassword',
-            110:self.f_nmcli_disconnect,
-            120:self.f_nmcli_deleteconnection,
-            130:self.f_nmcli_downconnection,
+            110:self.f_nmcli_connect_to_wifi,
+            111:'wifissid1',
+            112:'wifipassword1',
+            120:self.f_nmcli_connect_to_wifi,
+            121:'wifissid2',
+            122:'wifipassword2',
+
+            180:self.f_nmcli_disconnect,
+            181:self.f_nmcli_deleteconnection,
+            182:self.f_nmcli_downconnection,
             200:self.f_nmcli_hotspot_wifi,
             201:'hotspotssid',
             202:'hotspotpassword',
