@@ -160,8 +160,9 @@ class bgmqtt(threading.Thread):
         
         try:
             
+            print(f"first to try to connect {ip}:{port}")
             self.mqttclient.connect(ip,port=port)
-            print(f"first try to connect {ip}:{port}")
+            print(f"first  try to connect {ip}:{port}")
 
             time.sleep(1)
             #self.mqttclient.loop_start() 
