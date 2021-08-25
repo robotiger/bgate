@@ -156,39 +156,37 @@ class bgmqtt(threading.Thread):
     def connect(self):
         ip,port = config.read("brokerip"),config.read("brokerport")
         print(f"try to connect {ip}:{port}")
-        
-        
-        try:
-            
-            print(f"first to try to connect {ip}:{port}")
-            self.mqttclient.connect(ip,port=port)
-            print(f"first  try to connect {ip}:{port}")
-
-            time.sleep(1)
-            #self.mqttclient.loop_start() 
-            self.isconnected=True
-        except:
-            self.isconnected=False
-            print(f"first except to connect {ip}:{port}")
-            
-            pass
-        if not self.isconnected:
-            print(f"fall\ntry to connect {ip=} {port=}")
+        if not self.isconnected:            
             try:
-                #self.mqttclient.loop_start()                 
+                print(f"first to try to connect {ip}:{port}")
                 self.mqttclient.connect(ip,port=port)
-                print(f"second try to connect {ip}:{port}")
-                
+                print(f"first  try to connect {ip}:{port}")
+    
                 time.sleep(1)
+                #self.mqttclient.loop_start() 
                 self.isconnected=True
             except:
                 self.isconnected=False
-                print(f"second except to connect {ip}:{port}")
+                print(f"first except to connect {ip}:{port}")
                 
-                pass 
-        if not self.isconnected:
-            print("fall - quit")
-            #quit()
+                pass
+            if not self.isconnected:
+                print(f"fall\ntry to connect {ip=} {port=}")
+                try:
+                    #self.mqttclient.loop_start()                 
+                    self.mqttclient.connect(ip,port=port)
+                    print(f"second try to connect {ip}:{port}")
+                    
+                    time.sleep(1)
+                    self.isconnected=True
+                except:
+                    self.isconnected=False
+                    print(f"second except to connect {ip}:{port}")
+                    
+                    pass 
+            if not self.isconnected:
+                print("fall - quit")
+                #quit()
             
             
     def disconnect(self):
