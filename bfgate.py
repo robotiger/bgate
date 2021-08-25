@@ -144,8 +144,8 @@ class bgmqtt(threading.Thread):
             self.connect()
             time.sleep(1)            
             print('publoop while')
-            while self.running and self.isconnected:
-#            while self.isconnected and not self.stop_event.is_set():
+#            while self.running and self.isconnected:
+            while self.isconnected and not self.stop_event.is_set():
                 try:
                     data = self.queue.get(timeout=1)
                     print(f'qget {data}')
