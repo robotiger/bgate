@@ -161,21 +161,29 @@ class bgmqtt(threading.Thread):
         try:
             
             self.mqttclient.connect(ip,port=port)
+            print(f"first try to connect {ip}:{port}")
+
             time.sleep(1)
             #self.mqttclient.loop_start() 
             self.isconnected=True
         except:
             self.isconnected=False
+            print(f"first except to connect {ip}:{port}")
+            
             pass
         if not self.isconnected:
             print(f"fall\ntry to connect {ip=} {port=}")
             try:
                 #self.mqttclient.loop_start()                 
                 self.mqttclient.connect(ip,port=port)
+                print(f"second try to connect {ip}:{port}")
+                
                 time.sleep(1)
                 self.isconnected=True
             except:
                 self.isconnected=False
+                print(f"second except to connect {ip}:{port}")
+                
                 pass 
         if not self.isconnected:
             print("fall - quit")
