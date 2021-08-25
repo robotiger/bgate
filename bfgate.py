@@ -200,8 +200,8 @@ class bgmqtt(threading.Thread):
     def publoop(self):
 
         print('publoop',self.stop_event.is_set())
-        while self.running:
-#        while not self.stop_event.wait(1):
+#        while self.running:
+        while not self.stop_event.is_set():
             self.connect()
             time.sleep(1)            
             print('publoop while')
