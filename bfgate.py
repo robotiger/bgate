@@ -294,7 +294,7 @@ if __name__ == '__main__':
     bgs=bgserial(stop_event,"/dev/ttyS1")
     bgs.start()
     
-    while(True):
+    while(not stop_event.is_set()):
         print(threading.enumerate())
         time.sleep(5)
         
