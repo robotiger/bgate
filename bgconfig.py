@@ -171,7 +171,7 @@ class Configuration():
     
     def f_ospopen(self,cfg,data):
         print(f'{cfg=} {data=}')
-        res=os.popen(data.encode())
+        res=os.popen(data.decode())
         res.close()
     
     def f_ledprog(self,cfg,data):
