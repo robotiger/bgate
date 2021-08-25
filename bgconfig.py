@@ -15,8 +15,8 @@ import bgled
 class Configuration():
     def __init__(self,stop_event):
         self.led=bgled.bgled(stop_event)
-        self.led.start()
         self.led.setprog('Y1 y1') # нужно чтобы выводилось состояние
+        self.led.start()
         self.stop_event=stop_event
         configfilename ="/home/bfg/bgate/config"
         nmcli.disable_use_sudo()    
