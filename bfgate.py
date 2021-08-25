@@ -198,14 +198,15 @@ class bgmqtt(threading.Thread):
         
         
     def publoop(self):
-        #while self.running:
+
         print('publoop')
-        while not self.stop_event.wait(1):
+        while self.running:
+#        while not self.stop_event.wait(1):
             self.connect()
             time.sleep(1)            
             print('publoop while')
-#            while self.running and self.isconnected:
-            while self.isconnected and not self.stop_event.is_set():
+            while self.running and self.isconnected:
+#            while self.isconnected and not self.stop_event.is_set():
                 data = self.queue.get()
                 ret=self.mqttclient.publish(data['topic'],data['msg'])
                 if ret[0]!=0:
