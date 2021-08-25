@@ -324,13 +324,7 @@ class bgserial(threading.Thread):
 
 
 if __name__ == '__main__':
-    #ls={}
 
-    
-    #led=bgled.bgled('Y1 y1') 
-    #led.start()
-    #led.setprog('g1 s1 g0 s1')
-  
     print("Print configuration")
     config=bgconfig.Configuration()
     config.print()
@@ -341,28 +335,15 @@ if __name__ == '__main__':
     bgs=bgserial("/dev/ttyS1")
     bgs.start()
     
+    while(True):
+        print(threading.enumerate())
+        time.sleep(10)
     
     
     
     
-    ##for c in config:
-    ##    print(c,config[c])        
-    ##argv=sys.argv
-    #argv=["i","/dev/ttyS1"]
-    #for  arg in range(1,len(argv)):
-        #print("<",arg,">")
-        ##ls[arg]=SerialBgate(argv[arg])
-        ##ls[arg].start()
     
-    
-    ##app.run(debug=True)
-    #while True:
-        #time.sleep(1)
-    ##t=input("Enter to exit")
-    
-    ##for  b in ls:
-        ##ls[b].stop()
-        ##ls[b].join()
+  
     
     
     
@@ -371,4 +352,5 @@ if __name__ == '__main__':
 
 """
 для nmcli нужно доустановить пакет dnsmasq-base
+для reboot создать /etc/shutdown.allow  с именем юзера
 """
