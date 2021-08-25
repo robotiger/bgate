@@ -199,7 +199,7 @@ class bgmqtt(threading.Thread):
         
     def publoop(self):
 
-        print('publoop')
+        print('publoop',self.stop_event.is_set())
         while self.running:
 #        while not self.stop_event.wait(1):
             self.connect()
