@@ -160,7 +160,7 @@ class bgmqtt(threading.Thread):
             self.disconnect()
             time.sleep(0.5)
             
-        self.mqttclient_stop()   
+        self.mqttclient.loop_stop()      
 
         
     def on_disconnect(self,client,userdata,rc):
