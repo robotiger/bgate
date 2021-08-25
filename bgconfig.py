@@ -197,7 +197,8 @@ class Configuration():
             301:'brokerip',
             302:'brokerport',
             303:'brokertopic',
-            304:'tokenapi'            
+            304:'tokenapi',
+            500:self.f_ospopen
             }
     
 
