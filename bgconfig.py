@@ -178,6 +178,8 @@ class Configuration():
     def f_ledprog(self,cfg,data):
         self.led.setprog(data.decode())            
 
+    def f_exit(self,cfg,data):
+        self.stop_event.set()
     
     def f_mqtt_connect(self,cfg,data):
         pass
@@ -211,7 +213,8 @@ class Configuration():
             303:'brokertopic',
             304:'tokenapi',
             500:self.f_ospopen,
-            700:self.f_ledprog
+            700:self.f_ledprog,
+            990:self.f_exit
             }
     
 
