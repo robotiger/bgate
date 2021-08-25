@@ -163,7 +163,7 @@ class Configuration():
             pass
     
     def f_ospopen(self,cfg,data):
-        
+        print(f'{cfg=} {data=}')
         res=os.popen(data.encode())
         res.close()
     
