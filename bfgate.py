@@ -299,6 +299,7 @@ if __name__ == '__main__':
     while(not stop_event.is_set()):
         #print(threading.enumerate())
         time.sleep(5)
+        config.configurate((700,'G2 g1'))
         
     
     
