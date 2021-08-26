@@ -24,7 +24,7 @@ import threading
 import shelve
 import hashlib
 import zlib
-#import nmcli
+import nmcli
 import socket,fcntl,struct
 import requests
 #import ipaddress
