@@ -10,12 +10,12 @@ import hashlib
 import bgled
 
 
-#нужен поток контролирующий соединения
 
-class Configuration():
+
+class Configuration(threading.Thread):
     def __init__(self,stop_event):
         self.led=bgled.bgled(stop_event)
-        self.led.setprog('Y1 y1') # нужно чтобы выводилось состояние
+        self.led.setprog('g0 y0 r1') #все выключим сначала
         self.led.start()
         self.stop_event=stop_event
         configfilename ="/home/bfg/bgate/config"
@@ -57,8 +57,8 @@ class Configuration():
             self.write("brokerport",1883)
             self.write("brokertopic","BFGS5")
             self.write("factory","jyjytgvjxdjr")
-            
-          
+
+
             
     def read(self, parameter):
         try:
@@ -213,6 +213,7 @@ class Configuration():
             302:'brokerport',
             303:'brokertopic',
             304:'tokenapi',
+            333:'brokerconnected',
             500:self.f_ospopen,
             700:self.f_ledprog,
             990:self.f_exit

@@ -188,7 +188,10 @@ class bgmqtt(threading.Thread):
     def stop(self):
         print("stop")
         self.running=False        
-        self.mqttclient.loop_stop()        
+        self.mqttclient.loop_stop()   
+        
+    def connected(self):
+        return self.isconnected
 
     #def Print(self,txt):
         #if(not self.queue.empty()):
@@ -286,6 +289,8 @@ if __name__ == '__main__':
 
     print("Print configuration")
     config=bgconfig.Configuration(stop_event)
+    config.configurate((700,b'R1 r1')) # моргаем красным пока включаемся
+    
     config.print()
 
     mqt=bgmqtt(stop_event)
@@ -294,15 +299,32 @@ if __name__ == '__main__':
     bgs=bgserial(stop_event,"/dev/ttyS1")
     bgs.start()
     
-    config.configurate((700,b'G2 g1'))
     
     while(not stop_event.is_set()):
         #print(threading.enumerate())
-        time.sleep(5)
-        config.configurate((700,b'r2 R1'))
+        time.sleep(15)
+        if mqt.isconnected:
+            config.configurate((700,b'r1 G1')) # mqtt соединение установлено выключим красный и включим зеленый
+        else:
+            config.configurate((700,b'R1 g1')) #иначе включим красный и отключим зеленый
+
+    
+        wificon='no wifi'
+        for d in nmcli.device.wifi():
+            if d.in_use:    
+                wificon='wifi'
+        for c in nmcli.connection():
+            if c.conn_type=='wifi' and c.device!='--' and c.name=='Hotspot':
+                wificon='hotspot'
+         
+        ledwifi={
+            'no wifi': b'y1',
+               'wifi': b'Y1',
+            'hotspot': b'Y1 y1'
+                }
+
+        config.configurate((700,ledwifi[wificon])) 
         
-    
-    
     
     
     
