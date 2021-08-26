@@ -56,7 +56,7 @@ class Configuration(threading.Thread):
             self.write("brokerip","192.168.31.20")
             self.write("brokerport",1883)
             self.write("brokertopic","BFGS5")
-            self.write("factory","jyjytgvjxdjr")
+            
 
 
             
@@ -107,8 +107,11 @@ class Configuration(threading.Thread):
                         connected=d.ssid
                 if connected: # and connected!=ssid:
                     print(f"disconnect {connected} connect to {ssid} {pas}")
-                    nmcli.connection.down(connected) #сначала отключиться
-                nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                    nmcli.connection.down(connected) #сначала отключиться если были подключены
+                try:    
+                    nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                except:
+                    pass
                 self.write(cfg+3,data) 
                     #сохраним id при следующем получении блютус команды с тем же ид 
                     #nmcli вызываться не будет
@@ -214,8 +217,8 @@ class Configuration(threading.Thread):
             303:'brokertopic',
             304:'tokenapi',
             333:'brokerconnected',
-            500:self.f_ospopen,
             700:self.f_ledprog,
+            900:self.f_ospopen,
             990:self.f_exit
             }
     
