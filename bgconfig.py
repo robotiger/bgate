@@ -23,6 +23,7 @@ class Configuration(threading.Thread):
         self.on=False
         try:
             self.config=shelve.open(configfilename) 
+            print('confog shelve',config)
         except:
             if os.path.isfile(configfilename+'.res'):
                 ## если есть резервный файл конфигурации используем его
