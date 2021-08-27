@@ -237,6 +237,7 @@ class bgserial(threading.Thread):
             return False
 
     def f_ta(self,s):
+        print(s,end=' ')
         return len(self.pack)<self.length+7 and len(self.pack)>2
         
             
