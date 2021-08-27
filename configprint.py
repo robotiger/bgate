@@ -12,5 +12,8 @@ while(True):
         break
     key,val=t.split()
     config[key]=val
+    config.sync()
+    
+config.close()
     
 

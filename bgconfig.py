@@ -12,7 +12,7 @@ import bgled
 
 
 
-class Configuration(threading.Thread):
+class Configuration():
     def __init__(self,stop_event):
         self.led=bgled.bgled(stop_event)
         self.led.setprog('g0 y0 r1') #все выключим сначала
@@ -23,7 +23,7 @@ class Configuration(threading.Thread):
         self.on=False
         try:
             self.config=shelve.open(configfilename) 
-            print('confog shelve',config)
+            print('config shelve',config)
         except:
             if os.path.isfile(configfilename+'.res'):
                 ## если есть резервный файл конфигурации используем его
@@ -41,8 +41,9 @@ class Configuration(threading.Thread):
             # файл и копия не открываются, новый не создается
             # сделаем словарь. работать будет, но после конфигурирования. 
             # ситуация почти невероятная, нужен человек
-            print('confg is dictionary')
             self.config={}
+            print('config is dictionary')
+
         self.configloaded=True
         self.funclist()        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
 
@@ -240,8 +241,8 @@ class Configuration(threading.Thread):
             if isinstance(self.func[cfg],str):
                 #это параметр. добавить ридонли для некоторых. пока так: cfg меньше 100 заводские настройки
                 if cfg>=100:
-                    self.write(cfg,data)
                     print(f" write {cfg=} {data=}")
+                    self.write(cfg,data)
             else:
                 #это действие. запустим в отдельном потоке
                 threading.Thread(target=self.func[cfg],args=(cfg,data)).start()
