@@ -243,7 +243,7 @@ class bgserial(threading.Thread):
     def paddbyte(self,serstr):
         
         for s in serstr:  
-            print(s)
+            #print(s)
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
@@ -251,7 +251,7 @@ class bgserial(threading.Thread):
                     #print(self.pack.hex(' '))
                     crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
-                    #print(f"{crc1=} {crc2=}")
+                    print(f"{crc1=} {crc2=}")
                     if crc1==crc2: # 
                         self.datapack=self.pack[5:-2]
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
