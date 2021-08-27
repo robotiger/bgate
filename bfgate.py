@@ -257,14 +257,14 @@ class bgserial(threading.Thread):
                         self.datapack=self.pack[5:-2]
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
                         if len(self.datapack) >20:
-                            cfg,data =bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
+                            dc =bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
                             if dc: # удачно расшифровали используем для конфигурирования
                                 logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-                                print(f'закодирована {cfg} {data}')   
+                                print(f'закодирована {dc[0]} {dc[1]}')   
                                 if dc[0]==707:
-                                    self.beaconled(data)
+                                    self.beaconled(dc[1])
                                 else:
-                                    config.configurate(cfg,data.decode())
+                                    config.configurate(dc[0],dc[1].decode())
                             else: 
                                 if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
                                     d=bgcoder.BlAdvCoder.decode2(self.datapack)
