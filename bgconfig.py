@@ -79,7 +79,7 @@ class Configuration(threading.Thread):
         except:
             pass
         if isinstance(parameter,str):
-            self.config[parameter]=value.decode()
+            self.config[parameter]=value
         try:
             self.config.sync()
         except:
@@ -154,7 +154,7 @@ class Configuration(threading.Thread):
         for d in nmcli.device.wifi():
             if d.in_use:
                 try:
-                    nmcli.connection.down(connected) # отключиться если подключен
+                    nmcli.connection.down(d.name) # отключиться если подключен
                 except:
                     pass
                 
@@ -176,12 +176,12 @@ class Configuration(threading.Thread):
     
     def f_ospopen(self,cfg,data):
         print(f'{cfg=} {data=}')
-        res=os.popen(data.decode())
+        res=os.popen(data) #.decode())
         res.close()
     
     def f_ledprog(self,cfg,data):
         #print(f'f_ledprog {cfg=} {data=}')
-        self.led.setprog(data.decode())            
+        self.led.setprog(data) #.decode())            
 
     def f_exit(self,cfg,data):
         self.stop_event.set()
@@ -189,7 +189,7 @@ class Configuration(threading.Thread):
     def f_extcommand(self,cfg,data):
         #self.stop_event.set()
         with open('/home/bfg/bgate/extcommand.sh','w') as ef:
-            ef.write(data.decode())
+            ef.write(data) #.decode())
     
     def f_mqtt_connect(self,cfg,data):
         pass
@@ -232,7 +232,7 @@ class Configuration(threading.Thread):
 
     def configurate(self,confdata):
         cfg=confdata[0]
-        data=confdata[1]
+        data=confdata[1].decode()
         if cfg in self.func:
             #есть такой пункт в конфигурации
             if isinstance(self.func[cfg],str):
