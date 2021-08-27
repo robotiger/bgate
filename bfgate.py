@@ -259,7 +259,9 @@ class bgserial(threading.Thread):
                         if dc: # удачно расшифровали используем для конфигурирования
                             logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                             config.configurate(dc)
-                            print(f'закодирована {dc}')                                                        
+                            print(f'закодирована {dc}')   
+                            if dc[0]==707:
+                                self.beaconled(dc[1])
                         else: 
                             if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
                                 d=bgcoder.BlAdvCoder.decode2(self.datapack)
@@ -278,6 +280,12 @@ class bgserial(threading.Thread):
 
     def write(self,data):
         self.ser.write(data)
+    
+    def beaconled(self,data):
+        enc_data=b'\xab\xba\x0f\00\04'+data
+        crc32=zlib.crc32(enc_data)
+        pack=struct.pack('>20sH',enc_data,crc32&0xffff)
+        self.ser.write(pack)
 
     def commandled(self,mac,r,g,b,t,p,o):
         #mac beacon str ,red ,green, blue, time sec,  period msec , ontime msec
