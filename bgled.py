@@ -30,13 +30,13 @@ class bgled(Thread):
         off(15)
         
     def setprog(self,newprog):
-        print("newprog",newprog)
+        #print("newprog",newprog)
         self.prog=newprog
 
 
     def run(self):
         self.running=True
-        print('start prog',self.prog)
+        #print('start prog',self.prog)
         pin={
             'r':(off,12),
             'R':(on,12),
