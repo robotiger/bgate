@@ -256,21 +256,21 @@ class bgserial(threading.Thread):
                     if crc1==crc2: # 
                         self.datapack=self.pack[5:-2]
                         print('data',self.datapack.hex(' '),'len',len(self.datapack))
-             
-                        dc=bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
-                        if dc: # удачно расшифровали используем для конфигурирования
-                            logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-                            config.configurate(dc)
-                            print(f'закодирована {dc}')   
-                            if dc[0]==707:
-                                self.beaconled(dc[1])
-                        else: 
-                            if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
-                                d=bgcoder.BlAdvCoder.decode2(self.datapack)
-                                d['gate']=config.read('macgate')
-                                #publish
-                                ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
-                                print(d)  
+                        if len(self.datapack) >20:
+                            dc=bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
+                            if dc: # удачно расшифровали используем для конфигурирования
+                                logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
+                                config.configurate(dc)
+                                print(f'закодирована {dc}')   
+                                if dc[0]==707:
+                                    self.beaconled(dc[1])
+                            else: 
+                                if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
+                                    d=bgcoder.BlAdvCoder.decode2(self.datapack)
+                                    d['gate']=config.read('macgate')
+                                    #publish
+                                    ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
+                                    print(d)  
                     self.pack=bytearray([s])
                
 
