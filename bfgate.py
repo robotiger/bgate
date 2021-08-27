@@ -244,7 +244,7 @@ class bgserial(threading.Thread):
     def paddbyte(self,serstr):
         
         for s in serstr:  
-            print(f'{bytearray([s]).hex()},{self.f_ab(s)=} {self.f_ba(s)=} {self.f_dl(s)=} {self.f_ta(s)=} len={len(self.pack)}')
+            #print(f'{bytearray([s]).hex()},{self.f_ab(s)=} {self.f_ba(s)=} {self.f_dl(s)=} {self.f_ta(s)=} len={len(self.pack)}')
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
