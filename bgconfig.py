@@ -239,6 +239,7 @@ class Configuration():
     
 
     def configurate(self,confdata):
+        
         cfg=confdata[0]
         data=confdata[1].decode()
         if cfg in self.func:

@@ -261,7 +261,7 @@ class bgserial(threading.Thread):
                             if dc: # удачно расшифровали используем для конфигурирования
                                 logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                                 config.configurate(dc)
-                                #print(f'закодирована {dc}')   
+                                print(f'закодирована {dc}')   
                                 if dc[0]==707:
                                     self.beaconled(dc[1])
                             else: 
