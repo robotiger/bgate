@@ -14,6 +14,7 @@ import bgled
 
 class Configuration():
     def __init__(self,stop_event):
+        print('Config __init__')
         self.led=bgled.bgled(stop_event)
         self.led.setprog('g0 y0 r1') #все выключим сначала
         self.led.start()
