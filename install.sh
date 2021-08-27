@@ -1,3 +1,5 @@
+sudo apt update
+sudo apt upgrade
 
 sudo apt install nginx
 #sudo cp nginx.conf /etc/nginx/nginx.conf 
@@ -14,6 +16,7 @@ pip3 install requests
 pip3 install pyserial
 pip3 install paho-mqtt
 pip3 install msgpack
+pip3 install pyserial
 #pip3 uninstall werkzeug
 #pip3 install werkzeug==0.16.0
 pip3 install werkzeug
