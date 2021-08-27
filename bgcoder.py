@@ -55,10 +55,10 @@ class BlAdvCoder:
             crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
             crcc=zlib.crc32(data)&0xffff
             if crc==crcc:
-                print('aes',data)
-                return (cfg,data.decode())
+                #print('aes',data)
+                return (cfg,data)
             else:
-                return (0,'')
+                return (0,b'')
 
 """
 HB ble5 
