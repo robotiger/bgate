@@ -242,7 +242,8 @@ class bgserial(threading.Thread):
             
     def paddbyte(self,serstr):
         
-        for s in serstr:               
+        for s in serstr:  
+            print(s)
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
