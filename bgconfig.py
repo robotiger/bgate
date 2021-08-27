@@ -25,7 +25,8 @@ class Configuration():
         try:
             print('try to open config file')
             self.config=shelve.open(configfilename) 
-            print('config shelve',config)
+            print('config file opened')
+            #print('config shelve',config)
         except:
             if os.path.isfile(configfilename+'.res'):
                 ## если есть резервный файл конфигурации используем его
@@ -43,7 +44,7 @@ class Configuration():
             # файл и копия не открываются, новый не создается
             # сделаем словарь. работать будет, но после конфигурирования. 
             # ситуация почти невероятная, нужен человек
-            self.config={}
+            #self.config={}
             print('config is dictionary')
 
         self.configloaded=True
