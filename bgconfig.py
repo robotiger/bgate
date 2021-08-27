@@ -241,7 +241,7 @@ class Configuration():
     def configurate(self,confdata):
         
         cfg=confdata[0]
-        data=confdata[1].decode()
+        data=confdata[1]
         if cfg in self.func:
             #есть такой пункт в конфигурации
             if isinstance(self.func[cfg],str):
