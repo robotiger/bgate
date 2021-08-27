@@ -258,7 +258,8 @@ class Configuration():
     
     
 if __name__=='__main__':
-    config=Configuration()
+    stop_event = threading.Event()    
+    config=Configuration(stop_event)
     config.print()
     
     config.configurate((200,"Xiaomi3"))
