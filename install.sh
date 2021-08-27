@@ -20,6 +20,9 @@ pip3 install werkzeug
 pip3 install nmcli
 sudo apt install dnsmasq-base
 sudo cp shutdown.allow /etc
+sudo cp bgate.service /etc/systemd/system
+sudo systemctl enable bgate.service
+
 
 #sudo cp barry.conf /etc/nginx/sites-available
 #sudo ln -s /etc/nginx/sites-available/barry.conf /etc/nginx/sites-enabled/
