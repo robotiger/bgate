@@ -189,7 +189,7 @@ class Configuration(threading.Thread):
     def f_extcommand(self,cfg,data):
         #self.stop_event.set()
         with open('/home/bfg/bgate/extcommand.sh','w') as ef:
-            ef.write(data)
+            ef.write(data.decode())
     
     def f_mqtt_connect(self,cfg,data):
         pass

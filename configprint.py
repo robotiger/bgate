@@ -5,6 +5,7 @@ print("Print configuration")
 #    print(c,config[c])
 for i,j in enumerate(config):
     print(i,j,config[j])
+print('можно откорректировать конфигурацию')
 while(True)
     t=input('key value for change')
     if t=='':
