@@ -270,7 +270,6 @@ class bgserial(threading.Thread):
                
 
     def reader(self):
-       
         with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             #while(self.running):
             while(not self.stop_event.is_set()):
@@ -307,7 +306,8 @@ if __name__ == '__main__':
             config.configurate((700,b'r1 G1')) # mqtt соединение установлено выключим красный и включим зеленый
         else:
             config.configurate((700,b'R1 g1')) #иначе включим красный и отключим зеленый
-
+            time.sleep(45)
+            mqt.connect()
     
         wificon='no wifi'
         for d in nmcli.device.wifi():
