@@ -185,6 +185,11 @@ class Configuration(threading.Thread):
 
     def f_exit(self,cfg,data):
         self.stop_event.set()
+
+    def f_extcommand(self,cfg,data):
+        #self.stop_event.set()
+        with open('/home/bfg/bgate/extcommand.sh','w') as ef:
+            ef.write(data)
     
     def f_mqtt_connect(self,cfg,data):
         pass
@@ -220,6 +225,7 @@ class Configuration(threading.Thread):
             333:'brokerconnected',
             700:self.f_ledprog,
             900:self.f_ospopen,
+            905:self.f_extcommand,
             990:self.f_exit
             }
     
