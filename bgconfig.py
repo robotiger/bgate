@@ -208,7 +208,7 @@ class Configuration(threading.Thread):
             180:self.f_nmcli_disconnect,
             181:self.f_nmcli_deleteconnection,
             182:self.f_nmcli_downconnection,
-            200:self.f_nmcli_hotspot_wifi,
+            #200:self.f_nmcli_hotspot_wifi,     проблемы исправить. потом включим
             201:'hotspotssid',
             202:'hotspotpassword',
             203:'hotspotkey',
