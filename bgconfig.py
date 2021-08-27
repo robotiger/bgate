@@ -264,8 +264,8 @@ if __name__=='__main__':
     
     config.configurate(201,"Xiaomi3")
 
-    config.configurate(101,"Xiaomi")
-    config.configurate(102,"Xiaomi2")
+    config.configurate(101,"Xiaomi_26A3")
+    config.configurate(102,"12345pibfg")
     config.configurate(100,"Xiaomi3")
     config.print()
     
