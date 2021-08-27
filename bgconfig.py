@@ -41,6 +41,7 @@ class Configuration(threading.Thread):
             # файл и копия не открываются, новый не создается
             # сделаем словарь. работать будет, но после конфигурирования. 
             # ситуация почти невероятная, нужен человек
+            print('confg is dictionary')
             self.config={}
         self.configloaded=True
         self.funclist()        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
@@ -79,6 +80,7 @@ class Configuration(threading.Thread):
         except:
             pass
         if isinstance(parameter,str):
+            print(f'store into config {parameter=} {value=}')
             self.config[parameter]=value
         try:
             self.config.sync()

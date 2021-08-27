@@ -17,8 +17,7 @@ pip3 install pyserial
 pip3 install paho-mqtt
 pip3 install msgpack
 pip3 install pyserial
-#pip3 uninstall werkzeug
-#pip3 install werkzeug==0.16.0
+pip3 install pycryptodome
 pip3 install werkzeug
 pip3 install nmcli
 sudo apt install dnsmasq-base
@@ -35,16 +34,7 @@ sudo systemctl enable bgate.service
 #sudo apt install python3-opencv
 #pip3 install rtsp
 
-#mkdir /home/bar/barry
-#mkdir /home/bar/data
-#mkdir /home/bar/works
 
-#sudo cp barry.service /etc/systemd/system
-#sudo cp barrygsm.service /etc/systemd/system
-#sudo cp barryemerg.service /etc/systemd/system
-#sudo systemctl enable barry.service
-#sudo systemctl enable barrygsm.service
-#sudo systemctl enable barryemerg.service
 
 
 
