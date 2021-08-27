@@ -24,7 +24,7 @@ class Configuration():
         self.on=False
         self.config=shelve.open(configfilename) 
 
-"""        
+        """        
         try:
             print('try to open config file')
             self.config=shelve.open(configfilename) 
@@ -49,7 +49,7 @@ class Configuration():
                     # ситуация почти невероятная, нужен человек
                     #self.config={}
                     print('config is dictionary')
-"""
+        """
         self.configloaded=True
         self.funclist()        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
 
