@@ -55,7 +55,7 @@ class BlAdvCoder:
             crc,cfg,data=struct.unpack('Hh%ds'%(dlina-11),rcv)
             crcc=zlib.crc32(data)&0xffff
             if crc==crcc:
-                return (cfg,data)
+                return (cfg,data.decode())
             else:
                 return (0,'')
 
