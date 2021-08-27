@@ -272,7 +272,7 @@ class bgserial(threading.Thread):
                                     topic=config.read('brokertopic')
                                     #publish
                                     ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})                            
-                                    #print(d)  
+                                    print(d)  
                     self.pack=bytearray([s])
                
 
