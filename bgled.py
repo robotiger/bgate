@@ -23,7 +23,11 @@ class bgled(Thread):
         g.setwarnings(False)
         g.setmode(g.BOARD)        
         
-        
+    @staticmethod
+    def ledoff():
+        off(11)
+        off(12)
+        off(15)
         
     def setprog(self,newprog):
         print("newprog",newprog)
@@ -66,6 +70,9 @@ def main():
         th.setprog('Y2 y2')
     # wait for thread to finish
     th.setprog('')
+    bgled.ledoff()
     th.join()
+
 if __name__ == '__main__':
     main()
+    

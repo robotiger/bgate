@@ -325,6 +325,7 @@ if __name__ == '__main__':
 
         config.configurate((700,ledwifi[wificon])) 
         
+config.configurate((700,b'r0 g0 )) 
     
     
     
