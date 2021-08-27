@@ -271,7 +271,7 @@ class bgserial(threading.Thread):
                                 #publish
                                 ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
                                 print(d)  
-                    self.pack=b''
+                    self.pack=bytearray([s])
                
 
     def reader(self):
