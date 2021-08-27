@@ -242,7 +242,7 @@ class bgserial(threading.Thread):
             
     def paddbyte(self,serstr):
         
-        for s in serstr:                #print(s,bytes([s]).hex(),self.f_ab(s), self.f_ba(s) , self.f_dl(s) , self.f_ta(s))
+        for s in serstr:               
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
@@ -279,8 +279,20 @@ class bgserial(threading.Thread):
     def write(self,data):
         self.ser.write(data)
 
-
-    
+    def commandled(self,mac,r,g,b,t,p,o):
+        #mac beacon str ,red ,green, blue, time sec,  period msec , ontime msec
+        try:
+            enc_data= struct.pack('>5s6s3B3h',b'\xab\xba\x0f\00\04',bytes.fromhex(mac),r,g,b,t,p,o)
+        except:
+            return None
+        crc32=zlib.crc32(enc_data)
+        #print(crc32.to_bytes().hex(' '))
+        return struct.pack('>20sH',enc_data,crc32&0xffff)
+        """   for test
+        mac='c65a9cf5d474'        
+        cmd=commandled('c65a9cf5d474',4,5,6,259,259,259)
+        print('cmd',cmd.hex(' '))
+        """
 
 
 if __name__ == '__main__':
@@ -305,6 +317,7 @@ if __name__ == '__main__':
         time.sleep(15)
         if mqt.isconnected:
             config.configurate((700,b'r1 G1')) # mqtt соединение установлено выключим красный и включим зеленый
+            bgs.write(bgs.commandled('c65a9cf5d474',20,200,160,2,500,20))
         else:
             config.configurate((700,b'R1 g1')) #иначе включим красный и отключим зеленый
             time.sleep(45)
