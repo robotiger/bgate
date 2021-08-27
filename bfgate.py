@@ -94,7 +94,7 @@ class bgmqtt(threading.Thread):
     
         
     def connect(self):
-        ip,port = config.read("brokerip"),config.read("brokerport")
+        ip,port = config.read("brokerip"),int(config.read("brokerport"))
         print(f"try to connect {ip}:{port}")
         if not self.isconnected:            
             try:

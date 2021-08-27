@@ -56,7 +56,7 @@ class Configuration(threading.Thread):
             self.write("uuid",uuid.uuid1())
             self.write("brokerip","192.168.31.20")
             self.write("brokerport",'1883')
-            self.write("brokertopic","BFGS5")
+            self.write("brokertopic","BFG5")
             
 
 
