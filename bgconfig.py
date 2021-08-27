@@ -105,7 +105,7 @@ class Configuration(threading.Thread):
                 connected=None
                 for d in nmcli.device.wifi():
                     if d.in_use:
-                        connected=d.ssid
+                        connected=d.uuid
                 if connected: # and connected!=ssid:
                     print(f"disconnect {connected} connect to {ssid} {pas}")
                     nmcli.connection.down(connected) #сначала отключиться если были подключены
