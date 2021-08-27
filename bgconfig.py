@@ -19,7 +19,7 @@ class Configuration():
         self.led.setprog('g0 y0 r1') #все выключим сначала
         self.led.start()
         self.stop_event=stop_event
-        configfilename ="/home/bfg/bgate/config"
+        configfilename ="/home/bfg/bgate/config.db"
         nmcli.disable_use_sudo()    
         self.on=False
         try:

@@ -1,5 +1,5 @@
 import shelve
-config=shelve.open("/home/bfg/bgate/config")
+config=shelve.open("/home/bfg/bgate/config.db")
 print("Print configuration")
 #for c in config:
 #    print(c,config[c])
