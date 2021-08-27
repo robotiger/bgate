@@ -262,11 +262,11 @@ if __name__=='__main__':
     config=Configuration(stop_event)
     config.print()
     
-    config.configurate((200,"Xiaomi3"))
+    config.configurate(201,"Xiaomi3")
 
-    config.configurate((101,"Xiaomi"))
-    config.configurate((102,"Xiaomi2"))
-    config.configurate((100,"Xiaomi3"))
+    config.configurate(101,"Xiaomi")
+    config.configurate(102,"Xiaomi2")
+    config.configurate(100,"Xiaomi3")
     config.print()
     
     print('test config.read')
