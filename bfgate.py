@@ -248,7 +248,7 @@ class bgserial(threading.Thread):
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else:
-                if len(self.pack)>20: # пакет принят. проверим контрольную сумму 
+                if len(self.pack)>8: # пакет принят. проверим контрольную сумму 
                     #print(self.pack.hex(' '))
                     crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
