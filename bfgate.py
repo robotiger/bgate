@@ -255,7 +255,7 @@ class bgserial(threading.Thread):
                     #print(f"{crc1=} {crc2=}")
                     if crc1==crc2: # 
                         self.datapack=self.pack[5:-2]
-                        print('data',self.datapack.hex(' '),'len',len(self.datapack))
+                        #print('data',self.datapack.hex(' '),'len',len(self.datapack))
                         if len(self.datapack) >20:
                             dc =bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
                             if dc: # удачно расшифровали используем для конфигурирования

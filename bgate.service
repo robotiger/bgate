@@ -9,7 +9,7 @@ PIDFile=/var/tmp/bgate.pid
 WorkingDirectory=/home/bfg/bgate
 ExecStart=/bin/bash /home/bfg/bgate/bgate.sh
 
-Restart=on-failure
+Restart=always
 RestartSec=15s
 
 [Install]
