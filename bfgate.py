@@ -144,7 +144,7 @@ class bgmqtt(threading.Thread):
         while not self.stop_event.is_set():
             self.connect()
             time.sleep(1)            
-            print('publoop while')
+            #print('publoop while')
 #            while self.running and self.isconnected:
             while self.isconnected and not self.stop_event.is_set():
                 try:
@@ -252,16 +252,16 @@ class bgserial(threading.Thread):
                     #print(self.pack.hex(' '))
                     crc1 = struct.unpack('>H',self.pack[-2:])[0]
                     crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
-                    print(f"{crc1=} {crc2=}")
+                    #print(f"{crc1=} {crc2=}")
                     if crc1==crc2: # 
                         self.datapack=self.pack[5:-2]
-                        print('data',self.datapack.hex(' '),'len',len(self.datapack))
+                        #print('data',self.datapack.hex(' '),'len',len(self.datapack))
                         if len(self.datapack) >20:
                             dc=bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
                             if dc: # удачно расшифровали используем для конфигурирования
                                 logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
                                 config.configurate(dc)
-                                print(f'закодирована {dc}')   
+                                #print(f'закодирована {dc}')   
                                 if dc[0]==707:
                                     self.beaconled(dc[1])
                             else: 
@@ -270,7 +270,7 @@ class bgserial(threading.Thread):
                                     d['gate']=config.read('macgate')
                                     #publish
                                     ret=mqt.publish({'topic':'BFG5','msg':msgpack.packb(d,use_bin_type=True)})                            
-                                    print(d)  
+                                    #print(d)  
                     self.pack=bytearray([s])
                
 
