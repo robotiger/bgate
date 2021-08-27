@@ -317,7 +317,7 @@ if __name__ == '__main__':
         time.sleep(15)
         if mqt.isconnected:
             config.configurate((700,b'r1 G1')) # mqtt соединение установлено выключим красный и включим зеленый
-            bgs.write(bgs.commandled('c65a9cf5d474',20,200,160,2,500,20))
+            bgs.write(bgs.commandled('c65a9cf5d474',220,120,0,2,800,5))
         else:
             config.configurate((700,b'R1 g1')) #иначе включим красный и отключим зеленый
             time.sleep(45)
