@@ -55,7 +55,7 @@ class Configuration(threading.Thread):
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
             self.write("brokerip","192.168.31.20")
-            self.write("brokerport",1883)
+            self.write("brokerport",'1883')
             self.write("brokertopic","BFGS5")
             
 
@@ -79,7 +79,7 @@ class Configuration(threading.Thread):
         except:
             pass
         if isinstance(parameter,str):
-            self.config[parameter]=value
+            self.config[parameter]=value.decode()
         try:
             self.config.sync()
         except:
