@@ -87,7 +87,9 @@ class Configuration():
             print(f'store into config {parameter=} {value=}')
             self.config[parameter]=value
         try:
+            print('try to sync')
             self.config.sync()
+            print('sync done')
         except:
             pass #dict cant be saved
         
