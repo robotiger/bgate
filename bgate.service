@@ -1,5 +1,5 @@
 [Unit]
-Description = Gunicorn instance to serve Barry
+Description = Bgate instance to serve bluetooth gate
 After=network.target
 
 [Service]
