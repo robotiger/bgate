@@ -353,7 +353,7 @@ if __name__ == '__main__':
 
         config.configurate(700,ledwifi[wificon]) 
         
-
+config.close()
 bgled.bgled.ledoff()
 
 """
