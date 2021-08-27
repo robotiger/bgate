@@ -23,6 +23,7 @@ class Configuration():
         nmcli.disable_use_sudo()    
         self.on=False
         try:
+            print('try to open config file')
             self.config=shelve.open(configfilename) 
             print('config shelve',config)
         except:
