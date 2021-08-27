@@ -56,8 +56,6 @@ class Configuration():
 #        self.tomap={}
 #        for name in self.mapto:
 #            self.tomap[self.mapto[name]]=name
-        self.write("factory","003")        
-        self.write("macgate","%012x"%uuid.getnode())
 
         if  self.read("macgate") is None:
             self.write("macgate","%012x"%uuid.getnode())
@@ -65,6 +63,7 @@ class Configuration():
             self.write("brokerip","192.168.31.20")
             self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
+            self.write("factory","004")        
             
 
 
