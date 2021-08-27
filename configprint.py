@@ -5,3 +5,11 @@ print("Print configuration")
 #    print(c,config[c])
 for i,j in enumerate(config):
     print(i,j,config[j])
+while(True)
+    t=input('key value for change')
+    if t=='':
+        break
+    key,val=t.split()
+    config[key]=val
+    
+

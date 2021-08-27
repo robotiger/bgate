@@ -1,3 +1,4 @@
+# git clone https://github.com/robotiger/bgate.git
 import serial
 #import numpy as np
 import math
@@ -325,16 +326,8 @@ if __name__ == '__main__':
 
         config.configurate((700,ledwifi[wificon])) 
         
-config.configurate((700,b'r0 g0 )) 
-    
-    
-    
-  
-    
-    
-    
-    
 
+bgled.ledoff()
 
 """
 для nmcli нужно доустановить пакет dnsmasq-base
