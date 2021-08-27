@@ -33,19 +33,19 @@ class Configuration():
                 os.rename(configfilename,configfilename+'.bro')
                 shutil.copyfile(configfilename,configfilename+'.bro')
                 shutil.copyfile(configfilename+'.res',configfilename)
-        try:
-            self.config=shelve.open(configfilename) 
-        except:
-            os.remove(configfilename) #не открывается копия удалим её и создадим новую конфигурацию
-        
-        try:
-            self.config=shelve.open(configfilename) 
-        except:
-            # файл и копия не открываются, новый не создается
-            # сделаем словарь. работать будет, но после конфигурирования. 
-            # ситуация почти невероятная, нужен человек
-            #self.config={}
-            print('config is dictionary')
+            try:
+                self.config=shelve.open(configfilename) 
+            except:
+                os.remove(configfilename) #не открывается копия удалим её и создадим новую конфигурацию
+            
+                try:
+                    self.config=shelve.open(configfilename) 
+                except:
+                    # файл и копия не открываются, новый не создается
+                    # сделаем словарь. работать будет, но после конфигурирования. 
+                    # ситуация почти невероятная, нужен человек
+                    self.config={}
+                    print('config is dictionary')
 
         self.configloaded=True
         self.funclist()        # коды параметров конфигурации. в интерфейсе числа. в программе и файле названия.
