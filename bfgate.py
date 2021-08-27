@@ -327,7 +327,7 @@ if __name__ == '__main__':
         config.configurate((700,ledwifi[wificon])) 
         
 
-bgled.ledoff()
+bgled.bgled.ledoff()
 
 """
 для nmcli нужно доустановить пакет dnsmasq-base
