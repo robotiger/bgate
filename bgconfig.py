@@ -63,7 +63,7 @@ class Configuration():
             self.write("brokerip","192.168.31.20")
             self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
-            self.write("factory","008")        
+            self.write("factory","009")        
             
 
 
