@@ -1,4 +1,5 @@
 import shelve
+import uuid
 config=shelve.open("/home/bfg/bgate/config")
 print("Print configuration")
 #for c in config:
