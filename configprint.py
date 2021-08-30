@@ -3,7 +3,7 @@ config=shelve.open("/home/bfg/bgate/config")
 print("Print configuration")
 #for c in config:
 #    print(c,config[c])
-if not config["macgate"]:
+if not config.get("macgate",None):
     config["macgate"]     ="%012x"%uuid.getnode()
     config["uuid"]        = uuid.uuid1()
     config["brokerip"]    ="192.168.31.20"
