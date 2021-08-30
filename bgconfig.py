@@ -10,6 +10,12 @@ import hashlib
 import bgled
 
 
+def ip_addresses():
+    ip=[]
+    for a in nmcli.device.show_all():
+        if int(a['GENERAL.STATE'].split()[0])==100:
+            ip.append(a['IP4.ADDRESS[1]'].split('/')[0].split('.')[3])
+
 
 
 class Configuration():
@@ -104,6 +110,8 @@ class Configuration():
     
     def close(self):
         self.config.close()
+        
+        
 
     def f_nmcli_connect_to_wifi(self,cfg,data):
         ssid=self.read(cfg+1)
@@ -199,6 +207,10 @@ class Configuration():
         #print(f'f_ledprog {cfg=} {data=}')
             self.led.setprog('R0 g1 r0 G1') #.decode())            
 
+    def f_ledip(self,cfg,data):
+        if data in ip_addresses():
+            self.led.setprog('R0 G1 R0 g1') #.decode())            
+
 
     def f_exit(self,cfg,data):
         self.stop_event.set()
@@ -242,6 +254,7 @@ class Configuration():
             333:'brokerconnected',
             700:self.f_ledprog,
             701:self.f_ledwhoimi,
+            702:self.f_ledip,
             900:self.f_ospopen,
             905:self.f_extcommand,
             990:self.f_exit
@@ -268,6 +281,9 @@ class Configuration():
     
     
 if __name__=='__main__':
+    
+    print(get_ip_address())
+    
     stop_event = threading.Event()    
     config=Configuration(stop_event)
     config.print()
