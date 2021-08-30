@@ -1,4 +1,4 @@
-from threading import Thread
+import threading 
 import time
 import OPi.GPIO as g
 
@@ -14,10 +14,10 @@ def off(pin):
 
 
 # A class that extends the Thread class
-class bgled(Thread):
+class bgled(threading.Thread):
     def __init__(self,stop_event):
         # Call the Thread class's init function
-        Thread.__init__(self)
+        threading.Thread.__init__(self)
         self.stop_event=stop_event
         self.prog=''
         g.setwarnings(False)
