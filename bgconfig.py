@@ -208,6 +208,7 @@ class Configuration():
             self.led.setprog('R0 g1 r0 G1') #.decode())            
 
     def f_ledip(self,cfg,data):
+        print(f'{data} in {ip_addresses()}')
         if data in ip_addresses():
             self.led.setprog('R0 G1 R0 g1') #.decode())            
 
