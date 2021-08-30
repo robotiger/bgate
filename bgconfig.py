@@ -193,6 +193,13 @@ class Configuration():
         #print(f'f_ledprog {cfg=} {data=}')
         self.led.setprog(data) #.decode())            
 
+    def f_ledwhoimi(self,cfg,data):
+        f=self.read('factory')
+        if f==data:
+        #print(f'f_ledprog {cfg=} {data=}')
+            self.led.setprog('R0 g1 r0 G1') #.decode())            
+
+
     def f_exit(self,cfg,data):
         self.stop_event.set()
 
@@ -234,6 +241,7 @@ class Configuration():
             304:'tokenapi',
             333:'brokerconnected',
             700:self.f_ledprog,
+            701:self.f_ledwhoimi,
             900:self.f_ospopen,
             905:self.f_extcommand,
             990:self.f_exit
