@@ -268,6 +268,7 @@ class bgserial(threading.Thread):
                                 if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
                                     d=bgcoder.BlAdvCoder.decode2(self.datapack)
                                     d['gate']=config.read('macgate')
+                                    d['factory']=config.read('factory')
                                     topic=config.read('brokertopic')
                                     #publish
                                     ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})                            
