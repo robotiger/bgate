@@ -56,17 +56,19 @@ class bgled(Thread):
                 time.sleep(0.1)
         
 def main():
+    stop_event = threading.Event()
     # Create an object of Thread
-    th = bgled('G1 g1 R1 r1 Y1 y1')
+    th = bgled(stop_event)
+    th.setprog('G1 g1 R1 r1 Y1 y1')
     # start the thread
     th.start()
     # print some logs in main thread
     for i in range(5):
-        print('Hi from Main Function')
         time.sleep(10)
+        print('red blink')
         th.setprog('R1 r1')
-        print('Hi from Main Function')
         time.sleep(10)
+        print('yellow blink')
         th.setprog('Y2 y2')
     # wait for thread to finish
     th.setprog('')
