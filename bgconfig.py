@@ -15,6 +15,7 @@ def ip_addresses():
     for a in nmcli.device.show_all():
         if int(a['GENERAL.STATE'].split()[0])==100:
             ip.append(a['IP4.ADDRESS[1]'].split('/')[0].split('.')[3])
+    return ip
 
 
 
