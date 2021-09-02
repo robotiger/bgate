@@ -24,7 +24,7 @@ class BlAdvCoder:
     @staticmethod
     def decode2(dpin):
         #dpo={'macgate':config['macgate']}
-        #dpo={}
+        dpo={}
         #dpo['raw']=dpin.hex()
         dp1=dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
         if len(dpin)==43: # from beacons
