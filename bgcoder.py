@@ -30,7 +30,7 @@ class BlAdvCoder:
         if len(dpin)==43: # from beacons
             dp2=dict(zip(['mfg','uuid','cnt','ext','exd','txpower'],       struct.unpack('6s16sHBBb', dpin[16:])))
             #dp3=dict(zip(['mfg','cnt','type','uuid','ext','exd','txpower'],struct.unpack('5sH2s8sBib',dpin[16:41])))
-            dp3=dict(zip(['mfg','cnt','uuid','ext','txpower'],struct.unpack('4sH8sB4xb',dpin[17:37])))
+            dp3=dict(zip(['mfg','cnt','uuid','ext','txpower'],struct.unpack('>4sH8sB4xb',dpin[17:37])))
             dp3['exd']=struct.unpack('>I',dpin[32:36])
             if dp2['mfg'].hex()=='1aff4c000215': #apple beacon
                 dpo={**dp1,**dp2}
