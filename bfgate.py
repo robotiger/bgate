@@ -267,7 +267,7 @@ class bgserial(threading.Thread):
                             else: 
                                 if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
                                     d=bgcoder.BlAdvCoder.decode2(self.datapack)
-                                    if 'mfg. in d:
+                                    if 'mfg' in d:
                                         d['gate']=config.read('macgate')
                                         d['factory']=config.read('factory')
                                         topic=config.read('brokertopic')
