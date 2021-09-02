@@ -34,7 +34,7 @@ class BlAdvCoder:
             dp3['exd']=struct.unpack('>I',dpin[32:36])
             if dp2['mfg'].hex()=='1aff4c000215': #apple beacon
                 dpo={**dp1,**dp2}
-            if dp3['mfg'].hex()=='16ffb1bf00': #hitech beacon
+            if dp3['mfg'].hex()=='ffb1bf00': #hitech beacon
                 dpo={**dp1,**dp3}
             if 'mfg' in dpo:
                 for c in dpo:
