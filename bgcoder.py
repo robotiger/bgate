@@ -29,17 +29,21 @@ class BlAdvCoder:
         dp1=dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
         if len(dpin)==43: # from beacons
             dp2=dict(zip(['mfg','uuid','cnt','ext','exd','txpower'],       struct.unpack('6s16sHBBb', dpin[16:])))
-            dp3=dict(zip(['mfg','cnt','type','uuid','ext','exd','txpower'],struct.unpack('5sH2s8sBib',dpin[16:41])))
+            #dp3=dict(zip(['mfg','cnt','type','uuid','ext','exd','txpower'],struct.unpack('5sH2s8sBib',dpin[16:41])))
+            dp3=dict(zip(['mfg','cnt','uuid','ext','txpower'],struct.unpack('4sH8sB4xb',dpin[17:37])))
+            dp3['exd']=struct.unpack('>I',dpin[32:36])
             if dp2['mfg'].hex()=='1aff4c000215': #apple beacon
                 dpo={**dp1,**dp2}
             if dp3['mfg'].hex()=='16ffb1bf00': #hitech beacon
                 dpo={**dp1,**dp3}
-            for c in dpo:
-                if c in ['mac','mfg','uuid']:
-                    dpo[c]=dpo[c].hex()
-            dpo['raw']=dpin.hex()
-            #dpo['gate']=config['macgate']      #позже добавим       
-            return dpo
+            if 'mfg' in dpo:
+                for c in dpo:
+                    if c in ['mac','mfg','uuid']:
+                        dpo[c]=dpo[c].hex()
+                dpo['raw']=dpin.hex()
+                #dpo['gate']=config['macgate']      #позже добавим       
+                return dpo
+        return None
              
 
     @staticmethod   
@@ -66,7 +70,10 @@ HB ble5
    00 03 95 39 6e 74 da 05 01 ff 7f c0 27 02 01 06 16 ff b1 bf 00 1c 5f 01 00 95 39 6e 74 da 05 00 00 00 00 00 f8 72 d3 03 08 48 42 
 43 00 03 af bf cf df ef ff 01 ff 7f f2 26 02 01 06 16 ff bf b1 00 00 7d 01 00 ff ff ff ff ff ff 00 00 00 00 00 f8 42 c4 03 08 48 42
    00 03 41 92 11 c2 a3 4c 01 ff 7f c1 26 02 01 06 16 ff b1 bf 00 00 0b 01 00 41 92 11 c2 a3 4c 00 00 00 00 00 f8 41 ab 03 08 48 42 
-   00 03 a4 59 b0 20 45 81 01 ff 7f ca 26 02 01 06 16 ff b1 bf 00 00 0d 01 00 a4 59 b0 20 45 81 00 00 00 00 00 f8 4d b4 03 08 48 42   
+   00 03 a4 59 b0 20 45 81 01 ff 7f ca 26 02 01 06 16 ff b1 bf 00 00 0d 01 00 a4 59 b0 20 45 81 00 00 00 00 00 f8 4d b4 03 08 48 42 
+   
+   00 03 c6 5a 9c f5 d4 74 01 ff 7f bd 27 02 01 06 16 ff b1 bf 00 94 06 01 00 4c 33 88 55 76 3f 01 00 00 00 45 f8 11 09 03 08 48 42   
+                                                                  count|uuid                   |t |   exd     |
 -1 0  1  2  3   4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 
    type | mac             |bits |tx|rs|pr|flags   |le|us|idmfg|pid|cnt |dev  + id              |ty|exdata     |tp|crc  |ln|st|name
    const| id              |const   |var  |const   | const         |var | id                    |var              |crc  |const
