@@ -43,7 +43,7 @@ class BlAdvCoder:
                 dpo['raw']=dpin.hex()
                 #dpo['gate']=config['macgate']      #позже добавим       
                 return dpo
-        return None
+        return {}
              
 
     @staticmethod   
@@ -130,7 +130,8 @@ if __name__=='__main__':
         bytes.fromhex('00 03 7a a7 37 b8 8f 69 01 ff 7f a1 26 02 01 1a 1a ff 4c 00 0c 0e 00 e6 0f a2 c8 62 1d 98 de 7a c4 65 b0 7d 10 05 1b 1c 7b 9d 38'),
         bytes.fromhex('00 03 a4 c1 38 ae 25 2a 01 ff 7f c4 26 02 01 06 11 16 95 fe 30 58 5b 05 01 2a 25 ae 38 c1 a4 28 01 00'),
         bytes.fromhex('00 00 00 01 95 3f c8 c4 01 ff 7f be 27 11 ff b1 bf e1 d0 5c cd 97 1f f5 d8 11 00 51 fd bc 9a '),
-        bytes.fromhex('00 03 c6 5a 9c f5 d4 74 01 ff 7f e2 26 02 01 06 16 ff b1 bf 00 9a 75 01 00 4c 33 88 55 76 3f 03 00 00 00 1b f8 86 a6 03 08 48 42')
+        bytes.fromhex('00 03 c6 5a 9c f5 d4 74 01 ff 7f e2 26 02 01 06 16 ff b1 bf 00 9a 75 01 00 4c 33 88 55 76 3f 03 00 00 00 1b f8 86 a6 03 08 48 42'),
+        bytes.fromhex('00 03 c6 5a 9c f5 d4 74 01 ff 7f c1 27 02 01 06 16 ff b1 bf 00 9d a3 01 00 4c 33 88 55 76 3f 02 00 00 0b 7b f8 e9 4b 03 08 48 42')
      ]
     
     for i in p:
@@ -143,7 +144,8 @@ if __name__=='__main__':
         #if len(i)==44:
             d=BlAdvCoder.aesdecode(i)
             #config
-            print(d[0],d[1])
+            if d:
+                print(d[0],d[1])
 
         print(d)
     #print(BlAdvDecoder.decode(bytes.fromhex('')))
