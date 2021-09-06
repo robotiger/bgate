@@ -44,6 +44,44 @@ class BlAdvCoder:
                 #dpo['gate']=config['macgate']      #позже добавим       
                 return dpo
         return {}
+    
+    @staticmethod
+    def decode3(dpin):
+        mask={'apple': {'len':43,'keypos':17,'key':bytes.fromhex('ff4c000215'),'txpos':42},
+              'bfg1':  {'len':43,'keypos':17,'key':bytes.fromhex('ffb1bf00'),'txpos':36}
+              }
+        # можно сделать управление масками
+        for msk in mask:
+            if mask[msk]['len']==len(dpin) and mask[msk]['key']==dpin[17:17+len(mask[msk]['key'])]:
+                                                                      
+                dpo = dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
+                dpo['raw']=dpin
+                dpo['mfg']=msk
+                txpos=mask[msk]['txpos']
+                dpo['txpower']=struct.unpack('b',dpin[txpos:txpos+1])[0]
+                return dpo
+        return {}  
+        
+        #dpo={}
+        #dpo['raw']=dpin.hex()
+        #dp1=dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
+        #if len(dpin)==43: # from beacons
+            #dp2=dict(zip(['mfg','uuid','cnt','ext','exd','txpower'],       struct.unpack('6s16sHBBb', dpin[16:])))
+            ##dp3=dict(zip(['mfg','cnt','type','uuid','ext','exd','txpower'],struct.unpack('5sH2s8sBib',dpin[16:41])))
+            #dp3=dict(zip(['mfg','cnt','uuid','ext','txpower'],struct.unpack('>4sH8sB4xb',dpin[17:37])))
+            #dp3['exd']=struct.unpack('>I',dpin[32:36])[0]
+            #if dp2['mfg'].hex()=='1aff4c000215': #apple beacon
+                #dpo={**dp1,**dp2}
+            #if dp3['mfg'].hex()=='ffb1bf00': #hitech beacon
+                #dpo={**dp1,**dp3}
+            #if 'mfg' in dpo:
+                #for c in dpo:
+                    #if c in ['mac','mfg','uuid']:
+                        #dpo[c]=dpo[c].hex()
+                #dpo['raw']=dpin.hex()
+                ##dpo['gate']=config['macgate']      #позже добавим       
+                #return dpo
+  
              
 
     @staticmethod   
@@ -136,9 +174,14 @@ if __name__=='__main__':
     
     for i in p:
         #print(BlAdvDecoder.decode(i))
+
+        d=BlAdvCoder.decode3(i)
+        print('d3',d)
+
+
         if len(i)==43:
             d=BlAdvCoder.decode2(i)
-            
+            print(d)
             #publish
         else:
         #if len(i)==44:
@@ -147,7 +190,7 @@ if __name__=='__main__':
             if d:
                 print(d[0],d[1])
 
-        print(d)
+       
     #print(BlAdvDecoder.decode(bytes.fromhex('')))
     t1=time.time()
     
