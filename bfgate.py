@@ -33,6 +33,7 @@ import requests
 import bgconfig
 import bgcoder
 import bgled
+import zmq
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
@@ -68,9 +69,50 @@ def logi(s):
 
 
 
+class bgzmq(threading.Thread):
 
 
+    def __init__(self,stop_event):
+        #global gmqttclient
+        print("__init__")
+        threading.Thread.__init__(self)  
+        self.stop_event = stop_event
+        self.queue= queue.Queue()       
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.PUSH)
+        self.socket.connect("tcp://192.168.31.122:5555")
+                                   
+    def connect(self):   
+        if self.context.closed or self.socket.closed:
+            self.context=zmq.Context()
+            self.socket=self.context.socket(zmq.PUSH)      
+            self.socket.connect("tcp://192.168.31.122:5555")
+             
+    def publish(self,data):
+        self.queue.put(data)
+        if self.queue.qsize()>100000: #ограничим длину буфера, на всякий
+            self.queue.get()
+        
+    def publoop(self):
+        ## publoop ждем сообщений в очереди, как появятся отправляем
+        print('publoop',self.stop_event.is_set())
+        while not self.stop_event.is_set():
+            self.connect()
+            try:
+                data = self.queue.get(timeout=2)
+            except:
+                data = None
+                #print('qeue get timeout')
+            if not data is None:
+                self.socket.send(data['msg'])
+        self.socket.disconnect()
+            
 
+    def run(self): 
+        print("run")
+        self.publoop()
+        
+        
 
 
 class bgmqtt(threading.Thread):
@@ -238,50 +280,52 @@ class bgserial(threading.Thread):
     def f_ta(self,s):
         #print(s,end=' ')
         return len(self.pack)<self.length+7 and len(self.pack)>2
-        
+
+
+    def reader(self):
+        with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
+            while(not self.stop_event.is_set()):
+                self.paddbyte(self.ser.read())        
             
     def paddbyte(self,serstr):
-        
         for s in serstr:  
             #print(f'{bytearray([s]).hex()},{self.f_ab(s)=} {self.f_ba(s)=} {self.f_dl(s)=} {self.f_ta(s)=} len={len(self.pack)}')
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
-            else:
-                if len(self.pack)>8: # пакет принят. проверим контрольную сумму 
-                    #print(self.pack.hex(' '))
-                    crc1 = struct.unpack('>H',self.pack[-2:])[0]
-                    crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
-                    #print(f"{crc1=} {crc2=}")
-                    if crc1==crc2: # 
-                        self.datapack=self.pack[5:-2]
-                        #print('data',self.datapack.hex(' '),'len',len(self.datapack))
-                        if len(self.datapack) >20:
-                            dc =bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
-                            if dc: # удачно расшифровали используем для конфигурирования
-                                logi(f' cfg {dc[0]} data {dc[1]}')                         #logi("%s %s %d %d %d %d %s %s"%(dp["gate"],dp["mac"],dp["band"],dp["rssi"],dp["txpower"],dp["cnt"],dp["uuid"],ret))
-                                print(f'закодирована {dc[0]} {dc[1]}')   
-                                if dc[0]==707:
-                                    self.beaconled(dc[1])
-                                else:
-                                    config.configurate(dc[0],dc[1].decode())
-                            else: 
-                                if len(self.datapack)==43: # все используемые адвертисинг пакеты 43 байта
-                                    d=bgcoder.BlAdvCoder.decode3(self.datapack)
-                                    if 'mfg' in d:
-                                        d['gate']=config.read('macgate')
-                                        d['factory']=config.read('factory')
-                                        topic=config.read('brokertopic')
-                                        #publish
-                                        ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})                            
-                                    #print(d)  
-                    self.pack=bytearray([s])
+            else: 
+                analize_packet()
+                self.pack=bytearray([s]) # новый пакет начинается с [s]     
+                
+    def analize_packet(self):   
+        if len(self.pack)>20: # пакет принят. проверим контрольную сумму 
+            #print(self.pack.hex(' '))
+            crc1 = struct.unpack('>H',self.pack[-2:])[0]
+            crc2 = zlib.crc32(self.pack[:-2]) & 0xffff
+            #print(f"{crc1=} {crc2=}")
+            if crc1==crc2: # 
+                self.datapack=self.pack[5:-2]
+                #print('data',self.datapack.hex(' '),'len',len(self.datapack))
+                dc =bgcoder.BlAdvCoder.aesdecode(self.datapack) #попробуем расшифровать
+                if dc: # удачно расшифровали используем для конфигурирования
+                    logi(f' cfg {dc[0]} data {dc[1]}')                        
+                    #print(f'закодирована {dc[0]} {dc[1]}')   
+                    if dc[0]==707:
+                        self.beaconled(dc[1])
+                    else:
+                        config.configurate(dc[0],dc[1].decode())
+                else: 
+                    d=bgcoder.BlAdvCoder.decode3(self.datapack)
+                    if 'mfg' in d:
+                        d['gate']=config.read('macgate')
+                        d['factory']=config.read('factory')
+                        topic=config.read('brokertopic')
+                        #publish
+                        #ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})      
+                        zmqt.publish(msgpack.packb(d,use_bin_type=True))
+                    #print(d)  
+          
                
 
-    def reader(self):
-        with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
-            #while(self.running):
-            while(not self.stop_event.is_set()):
-                self.paddbyte(self.ser.read())
 
     def write(self,data):
         self.ser.write(data)
@@ -301,11 +345,12 @@ class bgserial(threading.Thread):
         crc32=zlib.crc32(enc_data)
         #print(crc32.to_bytes().hex(' '))
         return struct.pack('>20sH',enc_data,crc32&0xffff)
-        """   for test
-        mac='c65a9cf5d474'        
-        cmd=commandled('c65a9cf5d474',4,5,6,259,259,259)
-        print('cmd',cmd.hex(' '))
-        """
+    
+"""   for test
+mac='c65a9cf5d474'        
+cmd=commandled('c65a9cf5d474',4,5,6,259,259,259)
+print('cmd',cmd.hex(' '))
+"""
 
 
 if __name__ == '__main__':
@@ -320,8 +365,12 @@ if __name__ == '__main__':
     
     config.print()
 
-    mqt=bgmqtt(stop_event)
-    mqt.start()
+    #mqt=bgmqtt(stop_event)
+    #mqt.start()
+
+    zmqt=bgzmq(stop_event)
+    zmqt.start()
+
     
     bgs=bgserial(stop_event,"/dev/ttyS1")
     bgs.start()
@@ -330,13 +379,20 @@ if __name__ == '__main__':
     while(not stop_event.is_set()):
         #print(threading.enumerate())
         time.sleep(15)
-        if mqt.isconnected:
-            config.configurate(700,'r1 G1') # mqtt соединение установлено выключим красный и включим зеленый
-            #bgs.write(bgs.commandled('c65a9cf5d474',220,220,1,1,450,15))
+        #if mqt.isconnected:
+            #config.configurate(700,'r1 G1') # mqtt соединение установлено выключим красный и включим зеленый
+            ##bgs.write(bgs.commandled('c65a9cf5d474',220,220,1,1,450,15))
+        #else:
+            #config.configurate(700,'R1 g1') #иначе включим красный и отключим зеленый
+            #time.sleep(45)
+            #mqt.connect()
+
+        if zmqt.socket.closed:
+            config.configurate(700,'R1 g1') # mqtt соединение установлено выключим красный и включим зеленый            
         else:
-            config.configurate(700,'R1 g1') #иначе включим красный и отключим зеленый
-            time.sleep(45)
-            mqt.connect()
+            config.configurate(700,'r1 G1') #иначе включим красный и отключим зеленый
+
+    
     
         wificon='no wifi'
         for d in nmcli.device.wifi():
