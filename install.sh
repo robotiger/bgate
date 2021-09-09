@@ -20,6 +20,8 @@ pip3 install pyserial
 pip3 install pycryptodome
 pip3 install werkzeug
 pip3 install nmcli
+pip3 install pyzmq
+sudo apt install libzmq3-dev
 sudo apt install dnsmasq-base
 sudo cp shutdown.allow /etc
 sudo cp bgate.service /etc/systemd/system

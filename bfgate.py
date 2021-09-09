@@ -318,6 +318,7 @@ class bgserial(threading.Thread):
                     if 'mfg' in d:
                         d['gate']=config.read('macgate')
                         d['factory']=config.read('factory')
+                        d['timegate']=time.time()
                         topic=config.read('brokertopic')
                         #publish
                         #ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})      

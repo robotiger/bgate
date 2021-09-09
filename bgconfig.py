@@ -67,8 +67,8 @@ class Configuration():
         if  self.read("macgate") is None:
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
-            self.write("brokerip","192.168.31.20")
-            self.write("brokerport",'1883')
+            self.write("brokerip","192.168.31.122")
+            self.write("brokerport",'5566')
             self.write("brokertopic","BFG5")
             self.write("factory","0012")        
             
