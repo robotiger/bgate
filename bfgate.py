@@ -293,7 +293,7 @@ class bgserial(threading.Thread):
             if self.f_ab(s) or self.f_ba(s) or self.f_dl(s) or self.f_ta(s):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else: 
-                analize_packet()
+                self.analize_packet()
                 self.pack=bytearray([s]) # новый пакет начинается с [s]     
                 
     def analize_packet(self):   
