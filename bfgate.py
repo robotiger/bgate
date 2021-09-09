@@ -80,7 +80,7 @@ class bgzmq(threading.Thread):
         self.queue= queue.Queue()       
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUSH)
-        self.socket.connect("tcp://192.168.31.122:5555")
+        self.socket.connect("tcp://192.168.31.122:5566")
                                    
     def connect(self):   
         if self.context.closed or self.socket.closed:
