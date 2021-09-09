@@ -104,7 +104,7 @@ class bgzmq(threading.Thread):
                 data = None
                 #print('qeue get timeout')
             if not data is None:
-                self.socket.send(data['msg'])
+                self.socket.send(data)
         self.socket.disconnect()
             
 
