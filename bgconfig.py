@@ -71,6 +71,8 @@ class Configuration():
             self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
             self.write("factory","0012")        
+            self.write("hostzmqip","192.168.31.122")
+            self.write("hostzmqport","5566")
             
 
 

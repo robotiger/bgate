@@ -80,13 +80,13 @@ class bgzmq(threading.Thread):
         self.queue= queue.Queue()       
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PUSH)
-        self.socket.connect("tcp://192.168.31.122:5566")
+        self.socket.connect(f'tcp://{config.read("hostzmqip")}:{config.read("hostzmqport")}')
                                    
     def connect(self):   
         if self.context.closed or self.socket.closed:
             self.context=zmq.Context()
             self.socket=self.context.socket(zmq.PUSH)      
-            self.socket.connect("tcp://192.168.31.122:5566")
+            self.socket.connect(f'tcp://{config.read("hostzmqip")}:{config.read("hostzmqport")}')
              
     def publish(self,data):
         self.queue.put(data)
@@ -252,18 +252,9 @@ class bgserial(threading.Thread):
         
     def run(self): 
         print("run serial")
-        self.running=True
         self.reader()
         
-        
-    def stop(self):
-        print("stop serial")
-        self.running=False        
-        
-    def test(self):
-        return self.running
-        
-        
+
     def f_ab(self,s):
         return len(self.pack)==0 and s==0xab
 
