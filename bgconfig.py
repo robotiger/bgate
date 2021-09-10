@@ -68,7 +68,7 @@ class Configuration():
             self.write("macgate","%012x"%uuid.getnode())
             self.write("uuid",uuid.uuid1())
             self.write("brokerip","192.168.31.122")
-            self.write("brokerport",'5566')
+            self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
             self.write("factory","0012")        
             
@@ -254,6 +254,10 @@ class Configuration():
             303:'brokertopic',
             304:'tokenapi',
             333:'brokerconnected',
+            
+            401:'hostzmqip',
+            402:'hostzmqport',
+            
             700:self.f_ledprog,
             701:self.f_ledwhoimi,
             702:self.f_ledip,
