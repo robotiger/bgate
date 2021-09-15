@@ -87,12 +87,15 @@ class bgzmq(threading.Thread):
             self.context=zmq.Context()
             self.socket=self.context.socket(zmq.PUSH)      
             self.socket.connect(f'tcp://{config.read("hostzmqip")}:{config.read("hostzmqport")}')
+            
+    def __len__(self):
+        return self.queue.qsize()
              
     def publish(self,data):
         self.queue.put(data)
-        if self.queue.qsize()>1000: #ограничим длину буфера, на всякий
+        if self.queue.qsize()>100000: #ограничим длину буфера, на всякий
             self.queue.get()
-            print("bgzmq bufer overflow")
+            #print("bgzmq bufer overflow")
         
     def publoop(self):
         ## publoop ждем сообщений в очереди, как появятся отправляем
@@ -383,7 +386,7 @@ if __name__ == '__main__':
             #time.sleep(45)
             #mqt.connect()
 
-        if zmqt.socket.closed:
+        if zmqt.socket.closed or len(zmqt)>10:
             config.configurate(700,'R1 g1') # mqtt соединение установлено выключим красный и включим зеленый            
         else:
             config.configurate(700,'r1 G1') #иначе включим красный и отключим зеленый
