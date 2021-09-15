@@ -90,8 +90,9 @@ class bgzmq(threading.Thread):
              
     def publish(self,data):
         self.queue.put(data)
-        if self.queue.qsize()>100000: #ограничим длину буфера, на всякий
+        if self.queue.qsize()>1000: #ограничим длину буфера, на всякий
             self.queue.get()
+            print("bgzmq bufer overflow")
         
     def publoop(self):
         ## publoop ждем сообщений в очереди, как появятся отправляем
