@@ -274,9 +274,11 @@ class bgserial(threading.Thread):
 
 
     def reader(self):
+        buf=b''
         with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             while(not self.stop_event.is_set()):
-                self.paddbyte(self.ser.read())        
+                buf=self.ser.read()
+                buf=self.paddbyte(buf)        
             
     def paddbyte(self,serstr):
         for s in serstr:  
@@ -285,7 +287,8 @@ class bgserial(threading.Thread):
                 self.pack+=bytes([s]) #добавляем принятые байты в пакет
             else: 
                 self.analize_packet()
-                self.pack=bytearray([s]) # новый пакет начинается с [s]     
+                #self.pack=bytearray([s]) # новый пакет начинается с [s]     
+                self.pack=bytes([s]) # новый пакет начинается с [s]     
                 
     def analize_packet(self):   
         if len(self.pack)>20: # пакет принят. проверим контрольную сумму 
