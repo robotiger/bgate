@@ -55,6 +55,7 @@ class BlAdvCoder:
             if mask[msk]['len']==len(dpin) and mask[msk]['key']==dpin[17:17+len(mask[msk]['key'])]:
                                                                       
                 dpo = dict(zip(['mac','rssi','band'],struct.unpack('2x6s3x2b',dpin[:13])))
+                dpo['mac']=dpo['mac'].hex()
                 dpo['raw']=dpin
                 dpo['mfg']=msk
                 txpos=mask[msk]['txpos']
