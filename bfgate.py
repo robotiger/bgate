@@ -408,7 +408,8 @@ if __name__ == '__main__':
                 }
 
         config.configurate(700,ledwifi[wificon]) 
-        
+        if wificon=='no wifi':
+            config.f_nmcli_connect_to_wifi(100,config.read(103))
 config.close()
 bgled.bgled.ledoff()
 
@@ -416,3 +417,10 @@ bgled.bgled.ledoff()
 для nmcli нужно доустановить пакет dnsmasq-base
 для reboot создать /etc/shutdown.allow  с именем юзера
 """
+"""
+    def f_nmcli_connect_to_wifi(self,cfg,data):
+        ssid=self.read(cfg+1)
+        pas=self.read(cfg+2)
+        idcon=self.read(cfg+3)
+        print(f'{idcon=} {data=} {ssid=} {pas=} {cfg=}')
+        if idcon!=data: #это не тот запрос,что был в прошлый раз"""
