@@ -70,9 +70,10 @@ class Configuration():
             self.write("brokerip","192.168.31.122")
             self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
-            self.write("factory","0012")        
-            self.write("hostzmqip","192.168.31.122")
-            self.write("hostzmqport","5566")
+            self.write("factory","0012")    
+        if self.read("hostzmqip") is None:            
+            self.write("hostzmqip","192.168.31.1")
+            self.write("hostzmqport","5555")
             
 
 
