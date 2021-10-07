@@ -116,12 +116,15 @@ class Configuration():
         self.config.close()
         
         
-
+    
+   
     def f_nmcli_connect_to_wifi(self,cfg,data):
         ssid=self.read(cfg+1)
         pas=self.read(cfg+2)
         idcon=self.read(cfg+3)
-        print(f'{idcon=} {data=} {ssid=} {pas=} {cfg=}')
+        eap=self.read(cfg+4)
+        identity=self.read(cfg+5)
+        print(f'{idcon=} {data=} {ssid=} {pas=} {cfg=} {eap=} {identity=}')
         if idcon!=data: #это не тот запрос,что был в прошлый раз
             if not ssid is None and not pas is None:
                 connected=None
@@ -131,8 +134,27 @@ class Configuration():
                 if connected: # and connected!=ssid:
                     print(f"disconnect {connected} connect to {ssid} {pas}")
                     nmcli.connection.down(connected) #сначала отключиться если были подключены
-                try:    
-                    nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                try: 
+                    if eap != 'peap':
+                        nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
+                    else:
+                        cl=nmcli.connection()
+                        for c in cl:
+                            if c.name==ssid:
+                                nmcli.connection.delete(ssid)
+                        for dev in nmcli.device():
+                            if dev.device_type=='wifi':
+                                break
+                        
+                        nmcli.connection.add('wifi',{'ssid':ssid},dev.device,ssid)
+                        nmcli.connection.modify(ssid,
+                                            {'wifi-sec.auth-alg':'open',
+                                             'wifi-sec.key-mgmt':'wpa-eap',
+                                             '802-1x.eap':'peap',
+                                             '802-1x.identity':identity,
+                                             '802-1x.password':pas,
+                                             '802-1x.phase2-auth':'mschapv2'})        
+                        nmcli.connection.up(ssid)
                 except:
                     pass
                 self.write(cfg+3,data) 
@@ -237,6 +259,11 @@ class Configuration():
             100:self.f_nmcli_connect_to_wifi,
             101:'wifissid',
             102:'wifipassword',
+            103:'idcon',
+            104: 'eap', #peap aes
+            105:'identity',
+            
+            
             110:self.f_nmcli_connect_to_wifi,
             111:'wifissid1',
             112:'wifipassword1',
