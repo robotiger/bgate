@@ -143,12 +143,14 @@ class Configuration():
                         cl=nmcli.connection()
                         for c in cl:
                             if c.name==ssid:
+                                
                                 nmcli.connection.delete(ssid)
                         for dev in nmcli.device():
                             if dev.device_type=='wifi':
                                 break
-                        print(dev.device,ssid,identity,pas)
+                        print(f'add connection {dev.device},{ssid},{identity},{pas}')
                         nmcli.connection.add('wifi',{'ssid':ssid},dev.device,ssid)
+                        print('modify connection')
                         nmcli.connection.modify(ssid,
                                             {'wifi-sec.auth-alg':'open',
                                              'wifi-sec.key-mgmt':'wpa-eap',
@@ -156,6 +158,7 @@ class Configuration():
                                              '802-1x.identity':identity,
                                              '802-1x.password':pas,
                                              '802-1x.phase2-auth':'mschapv2'})        
+                        print('up connection')
                         nmcli.connection.up(ssid)
                 except:
                     pass
