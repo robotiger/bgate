@@ -410,8 +410,12 @@ if __name__ == '__main__':
         config.configurate(700,ledwifi[wificon]) 
         if wificon=='no wifi':
             config.f_nmcli_connect_to_wifi(100,config.read(103))
-config.close()
+
+zmqt.join()
+bgs.join()
 bgled.bgled.ledoff()
+config.close()
+
 
 """
 для nmcli нужно доустановить пакет dnsmasq-base
