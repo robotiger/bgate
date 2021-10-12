@@ -136,8 +136,10 @@ class Configuration():
                     nmcli.connection.down(connected) #сначала отключиться если были подключены
                 try: 
                     if eap != 'peap':
+                        print('not peap')
                         nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
                     else:
+                        print('yes peap')
                         cl=nmcli.connection()
                         for c in cl:
                             if c.name==ssid:
