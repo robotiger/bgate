@@ -118,7 +118,7 @@ class Configuration():
         
     
    
-    def f_nmcli_connect_to_wifi(self,cfg,data):
+    def f_nmcli_connect_to_wifi(self,cfg,data):        
         ssid=self.read(cfg+1)
         pas=self.read(cfg+2)
         idcon=self.read(cfg+3)
@@ -126,6 +126,7 @@ class Configuration():
         identity=self.read(cfg+5)
         print(f'{idcon=} {data=} {ssid=} {pas=} {cfg=} {eap=} {identity=}')
         if idcon!=data: #это не тот запрос,что был в прошлый раз
+            self.write(cfg+3,data)             
             if not ssid is None and not pas is None:
                 connected=None
                 for d in nmcli.device.wifi():
@@ -143,12 +144,14 @@ class Configuration():
                         cl=nmcli.connection()
                         for c in cl:
                             if c.name==ssid:
-                                
+                                print(f'delete connection {ssid}')
                                 nmcli.connection.delete(ssid)
                         for dev in nmcli.device():
                             if dev.device_type=='wifi':
                                 break
                         print(f'add connection {dev.device},{ssid},{identity},{pas}')
+                        #add connection         wlan0,     spring,     bfg,    bfgs5566
+
                         nmcli.connection.add('wifi',{'ssid':ssid},dev.device,ssid)
                         print('modify connection')
                         nmcli.connection.modify(ssid,
@@ -162,7 +165,7 @@ class Configuration():
                         nmcli.connection.up(ssid)
                 except:
                     pass
-                self.write(cfg+3,data) 
+
                     #сохраним id при следующем получении блютус команды с тем же ид 
                     #nmcli вызываться не будет
                 for c in nmcli.connection(): 
