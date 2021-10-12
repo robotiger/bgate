@@ -145,7 +145,7 @@ class Configuration():
                         for dev in nmcli.device():
                             if dev.device_type=='wifi':
                                 break
-                        
+                        print(dev.device,ssid,identity,pas)
                         nmcli.connection.add('wifi',{'ssid':ssid},dev.device,ssid)
                         nmcli.connection.modify(ssid,
                                             {'wifi-sec.auth-alg':'open',
@@ -260,7 +260,7 @@ class Configuration():
             101:'wifissid',
             102:'wifipassword',
             103:'idcon',
-            104: 'eap', #peap aes
+            104: 'eap', #peap or not
             105:'identity',
             
             
