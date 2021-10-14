@@ -135,9 +135,12 @@ class Configuration():
                 if connected: # and connected!=ssid:
                     print(f"disconnect {connected} connect to {ssid} {pas}")
                     #nmcli.device.disconnect(
-                    nmcli.connection.down(connected) #сначала отключиться если были подключены
+                    try:
+                        nmcli.connection.down(connected) #сначала отключиться если были подключены
+                    except:
+                        print(f'not disconnected {connected}')
                 for d in nmcli.device():
-                    if d.device_type=='wifi':
+                    if d.device_type=='wifi' and d.state=='connected':
                         nmcli.device.disconnect(d.device)
                 try: 
                     if eap != 'peap':
