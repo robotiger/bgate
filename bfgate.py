@@ -7,6 +7,7 @@ import sys
 import shutil
 import threading
 import time
+import random
 import queue
 import datetime
 import logging
@@ -409,7 +410,7 @@ if __name__ == '__main__':
 
         config.configurate(700,ledwifi[wificon]) 
         if wificon=='no wifi':
-            config.f_nmcli_connect_to_wifi(100,config.read(103))
+            config.f_nmcli_connect_to_wifi(100,random.randbytes(4).hex())
 
 zmqt.join()
 bgs.join()
