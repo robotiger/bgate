@@ -133,7 +133,7 @@ class Configuration():
                     if d.in_use:
                         connected=d.ssid
                 if connected: # and connected!=ssid:
-                    print(f"disconnect {connected} connect to {ssid} {pas}")
+                    #print(f"disconnect {connected} connect to {ssid} {pas}")
                     #nmcli.device.disconnect(
                     try:
                         nmcli.connection.down(connected) #сначала отключиться если были подключены
@@ -146,22 +146,22 @@ class Configuration():
                     cl=nmcli.connection()
                     for c in cl:
                         if c.name==ssid:
-                            print(f'delete connection {ssid}')
+                            #print(f'delete connection {ssid}')
                             nmcli.connection.delete(ssid)     
                             
                     if eap != 'peap':
-                        print('not peap')
+                        #print('not peap')
                         nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
                     else:
-                        print('yes peap')
+                        #print('yes peap')
                         for dev in nmcli.device():
                             if dev.device_type=='wifi':
                                 break
-                        print(f'add connection {dev.device},{ssid},{identity},{pas}')
+                        #print(f'add connection {dev.device},{ssid},{identity},{pas}')
                         #add connection         wlan0,     spring,     bfg,    bfgs5566
 
                         nmcli.connection.add('wifi',{'ssid':ssid},dev.device,ssid)
-                        print('modify connection')
+                        #print('modify connection')
                         nmcli.connection.modify(ssid,
                                             {'wifi-sec.auth-alg':'open',
                                              'wifi-sec.key-mgmt':'wpa-eap',
@@ -169,7 +169,7 @@ class Configuration():
                                              '802-1x.identity':identity,
                                              '802-1x.password':pas,
                                              '802-1x.phase2-auth':'mschapv2'})        
-                        print('up connection')
+                        #print('up connection')
                         nmcli.connection.up(ssid)
                 except:
                     pass
