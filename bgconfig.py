@@ -143,16 +143,17 @@ class Configuration():
                     if d.device_type=='wifi' and d.state=='connected':
                         nmcli.device.disconnect(d.device)
                 try: 
+                    cl=nmcli.connection()
+                    for c in cl:
+                        if c.name==ssid:
+                            print(f'delete connection {ssid}')
+                            nmcli.connection.delete(ssid)     
+                            
                     if eap != 'peap':
                         print('not peap')
                         nmcli.device.wifi_connect(ssid=ssid,password=pas) # потом подключится к новой
                     else:
                         print('yes peap')
-                        cl=nmcli.connection()
-                        for c in cl:
-                            if c.name==ssid:
-                                print(f'delete connection {ssid}')
-                                nmcli.connection.delete(ssid)
                         for dev in nmcli.device():
                             if dev.device_type=='wifi':
                                 break
