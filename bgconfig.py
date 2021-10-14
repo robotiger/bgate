@@ -132,6 +132,8 @@ class Configuration():
                 for d in nmcli.device.wifi():
                     if d.in_use:
                         connected=d.ssid
+                if connected==data:
+                    return    
                 if connected: # and connected!=ssid:
                     #print(f"disconnect {connected} connect to {ssid} {pas}")
                     #nmcli.device.disconnect(
@@ -176,8 +178,8 @@ class Configuration():
 
                     #сохраним id при следующем получении блютус команды с тем же ид 
                     #nmcli вызываться не будет
-                for c in nmcli.connection(): 
-                    print(c)                    
+                #for c in nmcli.connection(): 
+                    #print(c)                    
 
 
     def f_nmcli_hotspot_wifi(self,cfg,key):
