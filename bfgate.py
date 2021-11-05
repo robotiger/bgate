@@ -410,8 +410,8 @@ if __name__ == '__main__':
 
         config.configurate(700,ledwifi[wificon]) 
         if wificon=='no wifi':
-            config.f_nmcli_connect_to_wifi(100,random.randbytes(4).hex())
-
+            #config.f_nmcli_connect_to_wifi(100,random.randbytes(4).hex())
+            config.f_nmcli_connect_to_wifi(100,random.randint(0,4000000000).to_bytes(4,'big').hex())
 zmqt.join()
 bgs.join()
 bgled.bgled.ledoff()
