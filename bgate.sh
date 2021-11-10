@@ -1,6 +1,10 @@
 #git pull
-[ ! -f /home/bfg/bgate/config.db]; && /home/bfg/bgate/startwifi.sh
+if [ ! -f /home/bfg/bgate/config.db ]; then 
+  /home/bfg/bgate/startwifi.sh
+fi
 python3 bfgate.py
-[ -f /home/bfg/bgate/extcommand.sh]; && /home/bfg/bgate/extcommand.sh
+if [ -f /home/bfg/bgate/extcommand.sh ]; then 
+   /home/bfg/bgate/extcommand.sh
+fi
 
 
