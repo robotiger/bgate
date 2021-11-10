@@ -19,6 +19,7 @@ pip3 install msgpack
 pip3 install pyserial
 pip3 install pycryptodome
 pip3 install werkzeug
+pip3 install contextvars
 pip3 install nmcli
 pip3 install pyzmq
 
