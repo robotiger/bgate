@@ -1,9 +1,9 @@
-sudo apt update
-sudo apt upgrade
+sudo apt update -y
+sudo apt upgrade -y
 
-sudo apt install nginx
+sudo apt install nginx -y
 #sudo cp nginx.conf /etc/nginx/nginx.conf 
-sudo apt install python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools
+sudo apt install python3-pip python3-dev build-essential libssl-dev libffi-dev python3-setuptools -y
 sudo cp 99-gpio.rules /etc/udev/rules.d/
 sudo groupadd gpio
 sudo usermod -aG gpio bfg
@@ -23,8 +23,8 @@ pip3 install contextvars
 pip3 install nmcli
 pip3 install pyzmq
 
-sudo apt install libzmq3-dev
-sudo apt install dnsmasq-base
+sudo apt install libzmq3-dev -y
+sudo apt install dnsmasq-base -y
 sudo cp shutdown.allow /etc
 sudo cp bgate.service /etc/systemd/system
 sudo systemctl enable bgate.service

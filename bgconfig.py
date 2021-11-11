@@ -70,10 +70,14 @@ class Configuration():
             self.write("brokerip","192.168.31.122")
             self.write("brokerport",'1883')
             self.write("brokertopic","BFG5")
-            self.write("factory","0012")    
+            self.write("factory","0012")   
+            self.write("wifissid","Xiaomi_26A3")
+            self.write("wifipassword","12345pibfg")
+            self.write("eap","noeap")
+            self.write("identity","bfg")
         if self.read("hostzmqip") is None:            
-            self.write("hostzmqip","192.168.31.1")
-            self.write("hostzmqport","5555")
+            self.write("hostzmqip","192.168.31.122")
+            self.write("hostzmqport","5566")
             
 
 
