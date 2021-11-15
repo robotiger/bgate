@@ -266,7 +266,7 @@ class Configuration():
 
     def f_extcommand(self,cfg,data):
         #self.stop_event.set()
-        with open('/home/bfg/bgate/extcommand.sh','w') as ef:
+        with open('/home/bfg/bgate/extcommand.sh','a') as ef:
             ef.write(data) #.decode())
     
     def f_mqtt_connect(self,cfg,data):
