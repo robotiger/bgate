@@ -1,4 +1,7 @@
 #git pull
+if [ -f /home/bfg/bgate/extcommand.sh ]; then 
+   rm /home/bfg/bgate/extcommand.sh
+fi
 if [ ! -f /home/bfg/bgate/config.db ]; then 
   /home/bfg/bgate/startwifi.sh
 fi
