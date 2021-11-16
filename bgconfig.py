@@ -272,13 +272,18 @@ class Configuration():
 
     def f_extcommand(self,cfg,data):
         #self.stop_event.set()
-        with open('/home/bfg/bgate/extcommand.sh','a') as ef:
+        with open('/home/bfg/bgate/ecmd','w') as ef:
+            ef.write(data) #.decode())
+
+    def f_extcommanda(self,cfg,data):
+        #self.stop_event.set()
+        with open('/home/bfg/bgate/ecmd','a') as ef:
             ef.write(data) #.decode())
 
     def f_gitpull(self,cfg,data):
         #self.stop_event.set()
-        with open('/home/bfg/bgate/extcommand.sh','w') as ef:
-            ef.write('git pull\nreboot\n')
+        with open('/home/bfg/bgate/ecmd','w') as ef:
+            ef.write('git pull\n')
             ef.close()
 
     
@@ -329,6 +334,7 @@ class Configuration():
             702:self.f_ledip,
             900:self.f_ospopen,
             905:self.f_extcommand,
+            906:self.f_extcommanda,
             910:self.f_gitpull,
             990:self.f_exit
             }
