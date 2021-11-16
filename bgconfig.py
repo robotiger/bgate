@@ -120,7 +120,13 @@ class Configuration():
         self.config.close()
         
         
-    
+    def f_setmacgate(self,cfg,data):
+        if len(data)==12:
+            macgate=data
+        else:
+            macgate="%012x"%uuid.getnode()
+        self.write("macgate",macgate)
+        
    
     def f_nmcli_connect_to_wifi(self,cfg,data):        
         ssid=self.read(cfg+1)
@@ -300,6 +306,7 @@ class Configuration():
             121:'wifissid2',
             122:'wifipassword2',
 
+            150:self.f_setmacgate,
             180:self.f_nmcli_disconnect,
             181:self.f_nmcli_deleteconnection,
             182:self.f_nmcli_downconnection,
