@@ -4,14 +4,21 @@ config=shelve.open("/home/bfg/bgate/config")
 print("Print configuration")
 #for c in config:
 #    print(c,config[c])
-if not config.get("macgate",None):
-    config["macgate"]     ="%012x"%uuid.getnode()
-    config["uuid"]        = uuid.uuid1()
-    config["brokerip"]    ="192.168.31.20"
-    config["brokerport"]  ="1883"
-    config["brokertopic"] ="BFG5"
-    config["factory"]     ="0012"
-    
+#if not config.get("macgate",None):
+config["macgate"]     ="%012x"%uuid.getnode()
+config["uuid"]        = uuid.uuid1()
+config["brokerip"]    ="10.18.2.20"
+config["brokerport"]  ="1883"
+config["brokertopic"] ="BFG5"
+config["factory"]     ="0012"
+config["eap"]         ="peap"
+config["identity"]    ="bfg"
+config["wifissid"]    ="spring"
+config["wifipassword"]="M46jiI5d"
+config["histzmqip"]   ="10.18.2.20"
+config["histzmqport"] ="5566"
+config["idcon"]       ="spring"
+
     
 for i,j in enumerate(config):
     print(i,j,config[j])
