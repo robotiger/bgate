@@ -15,8 +15,8 @@ config["eap"]         ="peap"
 config["identity"]    ="bfg"
 config["wifissid"]    ="spring"
 config["wifipassword"]="M46jiI5d"
-config["histzmqip"]   ="10.18.2.20"
-config["histzmqport"] ="5566"
+config["hostzmqip"]   ="10.18.2.20"
+config["hostzmqport"] ="5566"
 config["idcon"]       ="spring"
 
     
