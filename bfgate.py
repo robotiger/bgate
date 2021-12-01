@@ -57,7 +57,7 @@ def get_ip_address(ifname):
         s.fileno(), 0x8915,  # SIOCGIFADDR
         struct.pack('256s', ifname[:15].encode('utf-8')))[20:24])
 
-
+#kjlkjlkj
 
 
 
@@ -282,7 +282,7 @@ class bgserial(threading.Thread):
         buf=b''
         with serial.Serial(self.port, 115200, timeout=1) as self.ser:  
             while(not self.stop_event.is_set()):
-                buf=self.ser.read()
+                buf=self.ser.read() #!?
                 buf=self.paddbyte(buf)        
             
     def paddbyte(self,serstr):

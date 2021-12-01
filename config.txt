@@ -1,0 +1,11 @@
+brokerip 192.168.31.122
+brokerport 1883
+brokertopic BFG5
+factory 0012   
+wifissid Xiaomi_26A3
+wifipassword 12345pibfg
+eap noeap
+identity bfg          
+hostzmqip 192.168.31.122
+hostzmqport 5566
+
