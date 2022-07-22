@@ -415,7 +415,7 @@ if __name__ == '__main__':
         ledwifi={
             'no wifi': 'y1',
                'wifi': 'Y1',
-            'hotspot': 'Y1 y1'
+            'hotspot': 'Y2 y1'
                 }
 
         config.configurate(700,ledwifi[wificon]) 
