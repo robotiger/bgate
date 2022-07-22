@@ -386,7 +386,7 @@ if __name__ == '__main__':
         d['gate']=config.read('macgate')
         d['factory']=config.read('factory')
         d['timegate']=time.time()
-        d['ip']=ip
+        d['ip']=bgconfig.ip_addresses()
         zmqt.publish(msgpack.packb(d,use_bin_type=True))        
         
         #if mqt.isconnected:
