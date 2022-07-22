@@ -382,7 +382,7 @@ if __name__ == '__main__':
     while(not stop_event.is_set()):
         #print(threading.enumerate())
         time.sleep(15)
-        
+        d={'mac': '000000000000', 'rssi': -20, 'band': 38, 'raw': b'00', 'mfg': 'bfg1', 'txpower': -8}        
         d['gate']=config.read('macgate')
         d['factory']=config.read('factory')
         d['timegate']=time.time()
