@@ -364,7 +364,7 @@ if __name__ == '__main__':
     config=bgconfig.Configuration(stop_event)
     config.configurate(700,'R1 r1') # моргаем красным пока включаемся
     
-    
+    ip=bgconfig.ip_addresses()
     config.print()
 
     #mqt=bgmqtt(stop_event)
