@@ -35,10 +35,10 @@ import bgconfig
 import bgcoder
 import bgled
 import zmq
+#import ifcfg
 
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-UPLOAD_FOLDER = '/var/www/upload'
+#ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+#UPLOAD_FOLDER = '/var/www/upload'
 
 #app = Flask(__name__)
 #app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -46,20 +46,22 @@ UPLOAD_FOLDER = '/var/www/upload'
 
 #app.wsgi_app = ProxyFix(app.wsgi_app)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+#def allowed_file(filename):
+    #return '.' in filename and \
+           #filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def get_ip_address(ifname):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    return socket.inet_ntoa(fcntl.ioctl(
-        s.fileno(), 0x8915,  # SIOCGIFADDR
-        struct.pack('256s', ifname[:15].encode('utf-8')))[20:24])
-
-#kjlkjlkj
-
-
+#def get_ip_address(ifname):
+##    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+##    return socket.inet_ntoa(fcntl.ioctl(
+##        s.fileno(), 0x8915,  # SIOCGIFADDR
+##        struct.pack('256s', ifname[:15].encode('utf-8')))[20:24])
+    
+    #ip=[]
+    #for i in ifcfg.interfaces().items(): 
+        #if not i[1]['inet'] is None: 
+            #ip.append(i[1]['inet'])
+    #return ip
 
 def logi(s):
     logname='/home/bfg/bgate/bdata.log'
@@ -318,7 +320,8 @@ class bgserial(threading.Thread):
                         d['gate']=config.read('macgate')
                         d['factory']=config.read('factory')
                         d['timegate']=time.time()
-                        topic=config.read('brokertopic')
+                        d['ip']=ip
+                        #topic=config.read('brokertopic')
                         #publish
                         #ret=mqt.publish({'topic':topic,'msg':msgpack.packb(d,use_bin_type=True)})      
                         zmqt.publish(msgpack.packb(d,use_bin_type=True))
@@ -361,7 +364,7 @@ if __name__ == '__main__':
     config=bgconfig.Configuration(stop_event)
     config.configurate(700,'R1 r1') # моргаем красным пока включаемся
     
-   
+    ip=bgconfig.ip_addresses()
     
     config.print()
 
@@ -379,6 +382,13 @@ if __name__ == '__main__':
     while(not stop_event.is_set()):
         #print(threading.enumerate())
         time.sleep(15)
+        
+        d['gate']=config.read('macgate')
+        d['factory']=config.read('factory')
+        d['timegate']=time.time()
+        d['ip']=ip
+        zmqt.publish(msgpack.packb(d,use_bin_type=True))        
+        
         #if mqt.isconnected:
             #config.configurate(700,'r1 G1') # mqtt соединение установлено выключим красный и включим зеленый
             ##bgs.write(bgs.commandled('c65a9cf5d474',220,220,1,1,450,15))
